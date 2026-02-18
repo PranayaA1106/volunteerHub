@@ -68,23 +68,22 @@
       /* ─── SIDEBAR ─────────────────────────────────────── */
       .sidebar {
         width: 210px;
-        min-height: 100vh;
+        position: fixed; /* fix the sidebar */
+        top: 0;
+        left: 0;
+        bottom: 0; /* stretch to bottom */
+        padding: 36px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         background: linear-gradient(
           160deg,
           var(--teal-deep) 0%,
           var(--teal-mid) 100%
         );
         border-radius: 0 36px 36px 0;
-        padding: 36px 24px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        height: 100vh;
         box-shadow: 6px 0 40px rgba(45, 106, 117, 0.18);
         z-index: 10;
-        flex-shrink: 0;
       }
 
       .logo img {
@@ -163,10 +162,13 @@
 
       /* Main Area */
       .main-content {
+        margin-left: 250px; /* match sidebar width */
         flex: 1;
         background: linear-gradient(180deg, #f7f9fb, #eef2f6);
         padding: 40px;
         border-radius: 30px 0 0 30px;
+        min-height: 100vh;
+        overflow-y: auto; /* enable scrolling inside main area */
       }
 
       /* Header */
@@ -216,7 +218,7 @@
           var(--orange-mid) 100%
         );
         border-radius: 32px;
-        padding: 52px 52px 48px;
+        padding: 30px 30px 24px;
         color: white;
         position: relative;
         overflow: hidden;
@@ -277,7 +279,7 @@
 
       .hero-card h3 {
         font-family: "Cormorant Garamond", serif;
-        font-size: 35px;
+        font-size: 28px;
         font-weight: 600;
         margin: 6px 0 2px;
         letter-spacing: 0.4px;
@@ -291,11 +293,12 @@
       }
 
       .big-number {
-        font-size: 72px;
+        font-size: 50px;
         font-weight: 700;
         letter-spacing: -1.5px;
         /* margin-bottom: 6px; */
       }
+      
 
       .impact-wrapper {
         display: flex;
@@ -346,7 +349,7 @@
       .ngo-stat-card {
         background: white;
         border-radius: 20px;
-        padding: 28px;
+        padding: 20px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
         transition: 0.3s ease;
         display: grid;
@@ -418,7 +421,7 @@
         justify-content: center;
         color: var(--teal-mid);
         font-family: "Cormorant Garamond", serif;
-        font-size: 155px;
+        font-size: 120px;
         font-weight: 600;
         line-height: 1;
         transform: translateY(-19px);
@@ -459,7 +462,7 @@
       }
       .stat-foot,
       .ngo-stat-foot {
-        font-size: 14.5px;
+        font-size: 12px;
         color: var(--white);
         margin-top: 4px;
       }
@@ -480,7 +483,7 @@
 
       .ngo-stat-number {
         font-family: "Cormorant Garamond", serif;
-        font-size: 75px;
+        font-size: 85px;
         font-weight: 600;
         color: var(--teal-mid);
         margin: 10px 0 6px;
@@ -619,40 +622,39 @@
         }
       }
       #loadMoreBtn {
-  display: block; /* will toggle with JS */
-  /* margin: 0 auto 0;  */
-  padding: 12px 28px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: white;
-  background: linear-gradient(135deg, var(--teal-mid), var(--orange-mid));
-  border: none;
-  border-radius: 999px; /* pill shape */
-  box-shadow: 0 10px 25px rgba(78, 154, 166, 0.35);
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-#loadMoreBtn::after {
-  content: "→";
-  display: inline-block;
-  margin-left: 10px;
-  transition: transform 0.25s ease;
-}
-#loadMoreBtn:hover::after {
-  transform: translateX(5px);
-}
+        display: block; /* will toggle with JS */
+        /* margin: 0 auto 0;  */
+        padding: 12px 28px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: white;
+        background: linear-gradient(135deg, var(--teal-mid), var(--orange-mid));
+        border: none;
+        border-radius: 999px; /* pill shape */
+        box-shadow: 0 10px 25px rgba(78, 154, 166, 0.35);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+      #loadMoreBtn::after {
+        content: "→";
+        display: inline-block;
+        margin-left: 10px;
+        transition: transform 0.25s ease;
+      }
+      #loadMoreBtn:hover::after {
+        transform: translateX(5px);
+      }
 
-#loadMoreBtn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 12px 30px rgba(78, 154, 166, 0.45);
-}
+      #loadMoreBtn:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(78, 154, 166, 0.45);
+      }
 
-#loadMoreBtn:active {
-  transform: scale(0.98);
-  box-shadow: 0 8px 20px rgba(78, 154, 166, 0.25);
-}
-
+      #loadMoreBtn:active {
+        transform: scale(0.98);
+        box-shadow: 0 8px 20px rgba(78, 154, 166, 0.25);
+      }
     </style>
   </head>
 
@@ -794,7 +796,7 @@
             <div id="applicationsList">
               <p class="loading">Loading...</p>
             </div>
-            <button id="loadMoreBtn" style="display:none;">See More</button>
+            <button id="loadMoreBtn" style="display: none">See More</button>
           </div>
 
           <!-- Skills -->
@@ -813,9 +815,8 @@
     <script type="module">
       /* ===== YOUR ORIGINAL JS (UNCHANGED) ===== */
       let allApplications = []; // store all applications
-let visibleAppCount = 2;  // initial number to show
-const appIncrement = 5;   // load 5 more each click
-
+      let visibleAppCount = 2; // initial number to show
+      const appIncrement = 5; // load 5 more each click
 
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
@@ -938,35 +939,36 @@ const appIncrement = 5;   // load 5 more each click
         journeyText.innerHTML = message;
       }
 
-function displayApplications(applications) {
-  allApplications = applications; // store globally
-  visibleAppCount = 2;             // reset count
-  renderApplications();            // render initial chunk
+      function displayApplications(applications) {
+        allApplications = applications; // store globally
+        visibleAppCount = 2; // reset count
+        renderApplications(); // render initial chunk
 
-  // Show "See More" button if needed
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-  loadMoreBtn.addEventListener("click", () => {
-    visibleAppCount += appIncrement;
-    renderApplications();
-  });
-}
+        // Show "See More" button if needed
+        const loadMoreBtn = document.getElementById("loadMoreBtn");
+        loadMoreBtn.addEventListener("click", () => {
+          visibleAppCount += appIncrement;
+          renderApplications();
+        });
+      }
 
-function renderApplications() {
-  const listContainer = document.getElementById("applicationsList");
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
+      function renderApplications() {
+        const listContainer = document.getElementById("applicationsList");
+        const loadMoreBtn = document.getElementById("loadMoreBtn");
 
-  if (allApplications.length === 0) {
-    listContainer.innerHTML = '<p class="empty-state">No applications yet.</p>';
-    loadMoreBtn.style.display = "none";
-    return;
-  }
+        if (allApplications.length === 0) {
+          listContainer.innerHTML =
+            '<p class="empty-state">No applications yet.</p>';
+          loadMoreBtn.style.display = "none";
+          return;
+        }
 
-  const appsToShow = allApplications.slice(0, visibleAppCount);
+        const appsToShow = allApplications.slice(0, visibleAppCount);
 
-  let html = '<div class="applications-list">';
-  appsToShow.forEach((app) => {
-    const date = new Date(app.appliedAt).toLocaleDateString();
-    html += `
+        let html = '<div class="applications-list">';
+        appsToShow.forEach((app) => {
+          const date = new Date(app.appliedAt).toLocaleDateString();
+          html += `
       <div class="application-item">
           <div class="app-header">
               <h3>${app.opportunity.title}</h3>
@@ -976,18 +978,17 @@ function renderApplications() {
           <p class="app-date">📅 Applied: ${date}</p>
       </div>
     `;
-  });
-  html += "</div>";
-  listContainer.innerHTML = html;
+        });
+        html += "</div>";
+        listContainer.innerHTML = html;
 
-  // Show/hide "See More" button
-  if (visibleAppCount >= allApplications.length) {
-    loadMoreBtn.style.display = "none";
-  } else {
-    loadMoreBtn.style.display = "block";
-  }
-}
-
+        // Show/hide "See More" button
+        if (visibleAppCount >= allApplications.length) {
+          loadMoreBtn.style.display = "none";
+        } else {
+          loadMoreBtn.style.display = "block";
+        }
+      }
 
       function displaySkills(skills, interests) {
         const container = document.getElementById("skillsOverview");
