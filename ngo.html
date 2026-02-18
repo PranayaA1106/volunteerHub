@@ -1,104 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NGO Dashboard</title>
-
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" >
+    <link rel="stylesheet" href="css/ngo.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
+    <div class="sidebar">
+    <div class="logo">
+        <h2>VolunteerHub</h2>
+    </div>
 
-<nav class="navbar">
-    <h2>🏢 NGO Dashboard</h2>
-    <button onclick="logout()" class="btn-secondary">Logout</button>
-</nav>
+    <ul class="menu">
+        <li onclick="showSection('dashboard')" class="active">
+            <i class="fa fa-home"></i> Dashboard
+        </li>
 
-<div class="container">
-<div class="ngo-container">
+        <li onclick="showSection('myOpportunities')">
+            <i class="fa fa-briefcase"></i> My Opportunities
+        </li>
 
-<!-- POST OPPORTUNITY -->
-<div class="card">
-<h2>📝 Post New Opportunity</h2>
+        <li onclick="showSection('postOpportunity')">
+            <i class="fa fa-plus-circle"></i> Post Opportunity
+        </li>
+    </ul>
+</div>
+<main class="main-content">
+        
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-header">
+                <h1 class="page-title">Management Overview</h1>
+            </div>
 
-<form id="opportunityForm">
+            <div class="stats-grid">
+                <div class="stat-card"><h3>Active Opps</h3><div class="number" id="activeCount">12</div></div>
+                <div class="stat-card"><h3>Applicants</h3><div class="number" id="applicantCount">48</div></div>
+                <div class="stat-card"><h3>Selected</h3><div class="number" id="selectedCount">15</div></div>
+                <div class="stat-card"><h3>Total Hours</h3><div class="number" id="hoursCount">320</div></div>
+            </div>
+             <div class="management-grid">
+                <div class="manage-box">
+                 <h2><i class="fa-solid fa-users"></i> Manage Applications</h2>
+                    <div class="scroller-area" id="manageApplications">
+                        <div class="item-card">
+    <div class="applicant-list">
+        <p><strong>Applicant:</strong> John Doe</p>
+        <p><strong>Skills:</strong> Teaching, Writing</p>
+        <button class="btn-accept">Accept</button>
+        <button class="btn-reject">Reject</button>
+    </div>
+</div>
+        </div>
+                            </div>
+                            <div class="manage-box">
+                                        <div id="postOpportunity" class="tab-content"></div>
+    <h2><i class="fa-solid fa-clipboard"></i> My Posted Opportunities</h2>
+    <div id="opportunityList" class="tab-content">
+        <div class="scroller-area">
 
-<div class="form-group">
-<label>NGO Name *</label>
-<input type="text" id="ngoName" required>
+            </div>
+            <div class="item-card">
+                <div class="card-actions"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                        </div>
+                        </div>
+                </div>
+            </div>
+<div id="myOpportunities" class="tab-content">
+    <button onclick="showSection('dashboard')" class="back-btn">
+        ← Back to Dashboard
+    </button>
+        </div>
+<div class="post-btn-container">
+            <button class="btn-post" onclick="showSection('postOpportunity')">
+                  POST NEW OPPORTUNITIES
+                </button>
+            <button onclick="showSection('dashboard')" style="border:none; background:none; cursor:pointer; color: var(--primary-teal); margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <div class="form-card" style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <h2 style="font-family: 'Playfair Display';">Create New Listing</h2>
+               <p>Fill in the details to reach your perfect volunteers.</p>
+        </div>
+        <form id="opportunityForm">
+            <div class="form-group">
+                <label>NGO Name *</label>
+                <input type="text" id="ngoName" placeholder="Your organization name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Opportunity Title *</label>
+                        <input type="text" id="title" placeholder="e.g., Online Math Tutors Needed" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="description" placeholder="Describe the opportunity..." rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+    <div class="form-group">
+        <label>Volunteers Needed *</label>
+        <input type="number" id="slots" placeholder="e.g. 5" required>
+    </div>
+    <div class="form-group">
+        <label>Application Deadline *</label>
+        <input type="date" id="deadline" required>
+    </div>
 </div>
 
 <div class="form-group">
-<label>Opportunity Title *</label>
-<input type="text" id="title" required>
+    <label>Category *</label>
+    <select id="category" required>
+        <option value="">Select Category</option>
+        <option value="Education">Education</option>
+        <option value="Environment">Environment</option>
+        <option value="Health">Health</option>
+        <option value="Community">Community</option>
+    </select>
 </div>
 
-<div class="form-group">
-<label>Description *</label>
-<textarea id="description" rows="4" required></textarea>
-</div>
 
-<div class="form-group">
-<label>Required Skills *</label>
-<div class="checkbox-grid">
-<label><input type="checkbox" name="skills" value="teaching"> Teaching</label>
-<label><input type="checkbox" name="skills" value="medical"> Medical</label>
-<label><input type="checkbox" name="skills" value="tech"> Technology</label>
-<label><input type="checkbox" name="skills" value="design"> Design</label>
-<label><input type="checkbox" name="skills" value="writing"> Writing</label>
-<label><input type="checkbox" name="skills" value="legal"> Legal</label>
-<label><input type="checkbox" name="skills" value="marketing"> Marketing</label>
-<label><input type="checkbox" name="skills" value="fundraising"> Fundraising</label>
-</div>
-</div>
+                    <div class="form-group">
+                        <label>Required Skills *</label>
+                        <div class="checkbox-grid">
+                            <label><input type="checkbox" name="skills" value="teaching"> Teaching</label>
+                            <label><input type="checkbox" name="skills" value="medical"> Medical</label>
+                            <label><input type="checkbox" name="skills" value="tech"> Technology</label>
+                            <label><input type="checkbox" name="skills" value="design"> Design</label>
+                            <label><input type="checkbox" name="skills" value="writing"> Writing</label>
+                            <label><input type="checkbox" name="skills" value="legal"> Legal</label>
+                            <label><input type="checkbox" name="skills" value="marketing"> Marketing</label>
+                            <label><input type="checkbox" name="skills" value="fundraising"> Fundraising</label>
+                        </div>
+                    </div>
 
-<div class="form-group">
-<label>Location</label>
-<input type="text" id="ngoLocation" placeholder="Sector 26, Chandigarh">
+                    <div class="form-group">
+                        
+    <label>Select Exact Location</label>
+    <div id="map" style="height: 320px; border-radius: 14px; margin-top: 10px;"></div>
+    <small>Drag the pin to set precise location</small>
 </div>
-
-<div class="form-group">
-<label>Pin NGO Location (Drag marker if needed)</label>
-<div id="map" style="height:300px;border-radius:8px;"></div>
-</div>
+                    </div>
 
 <div class="form-row">
-<label><input type="checkbox" id="isMicro"> ⏱ Micro-volunteering</label>
-<label><input type="checkbox" id="isUrgent"> 🚨 Urgent</label>
-</div>
+    <div class="form-group">
+        <div class="special-toggle-container">
 
-<button type="submit" class="btn-primary">Post Opportunity</button>
-<p class="success-msg" id="successMsg"></p>
-<p class="error-msg" id="errorMsg"></p>
+            <label class="toggle-card">
+                <input type="checkbox" id="isMicro" hidden>
+                <div class="toggle-content">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                    </div>
+                    <div class="text-box">
+                        <span class="title">Micro-volunteering</span>
+                        <span class="desc">Tasks under 60 mins</span>
+                    </div>
+                </div>
+            </label>
 
-</form>
-</div>
+            <label class="toggle-card">
+                <input type="checkbox" id="isUrgent" hidden>
+                <div class="toggle-content">
+                    <div class="icon-box urgent-icon">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="text-box">
+                        <span class="title">Urgent Need</span>
+                        <span class="desc">Immediate help required</span>
+                    </div>
+                </div>
+            </label>
 
-<!-- MY POSTS -->
-<div class="card">
-<h2>📋 My Posted Opportunities</h2>
-<div id="opportunitiesList"><p class="loading">Loading...</p></div>
+        </div>
+    </div>
 </div>
-
-</div>
-</div>
-
+                    <button type="submit" class="btn-primary">Post Opportunity</button>
+                    <p class="success-msg" id="successMsg"></p>
+                    <p class="error-msg" id="errorMsg"></p>
+                </form>
+            </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, collection, addDoc, query, where, getDocs, doc, getDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
-apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
-authDomain: "volunteerhub-5c419.firebaseapp.com",
-projectId: "volunteerhub-5c419",
-storageBucket: "volunteerhub-5c419.firebasestorage.app",
-messagingSenderId: "769987727654",
-appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+    apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+    authDomain: "volunteerhub-5c419.firebaseapp.com",
+    projectId: "volunteerhub-5c419"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -107,116 +207,187 @@ const db = getFirestore(app);
 
 let currentUser;
 let map, marker, selectedLatLng;
+let myOpportunityIds = [];
 
-// AUTH
+// SINGLE AUTH LISTENER (duplicate removed)
 onAuthStateChanged(auth, async (user) => {
-if (!user) return location.href = "index.html";
+    if (!user) return location.href = "index.html";
 
-currentUser = user;
-const userDoc = await getDoc(doc(db, "users", user.uid));
+    currentUser = user;
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (!userDoc.exists() || userDoc.data().role !== "ngo")
+        return location.href = "index.html";
 
-if (!userDoc.exists() || userDoc.data().role !== "ngo")
-return location.href = "index.html";
-
-loadOpportunities();
-setTimeout(initMap, 300);
+    window.userReady = true;
+    showSection('dashboard');
 });
 
 window.logout = async () => {
-await signOut(auth);
-location.href = "index.html";
+    await signOut(auth);
+    location.href = "index.html";
 };
 
-// MAP
+// TAB SWITCH (map safe init added)
+window.showSection = async function(sectionId) {
+    if (!window.userReady) return;
+
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+
+    const active = document.getElementById(sectionId);
+    if (!active) return;
+
+    active.style.display = 'block';
+
+    if(sectionId === 'postOpportunity'){
+        setTimeout(()=>{
+            initMap();
+            setTimeout(()=> map.invalidateSize(), 200);
+        },50);
+    }
+
+    if (sectionId === 'dashboard') {
+        await loadOpportunities();
+        await loadApplications();
+    }
+};
+
+// MAP FIXED
 function initMap() {
-if (map) map.remove();
+    const mapContainer = document.getElementById("map");
+    if (!mapContainer) return;
 
-map = L.map("map").setView([30.7333, 76.7794], 13);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    if (map) {
+        map.invalidateSize();
+        return;
+    }
 
-marker = L.marker([30.7333, 76.7794], { draggable: true }).addTo(map);
-selectedLatLng = marker.getLatLng();
+    map = L.map("map").setView([30.7333, 76.7794], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
 
-marker.on("dragend", () => {
-selectedLatLng = marker.getLatLng();
-});
+    marker = L.marker([30.7333, 76.7794], { draggable: true }).addTo(map);
+    selectedLatLng = marker.getLatLng();
+
+    marker.on("dragend", () => {
+        selectedLatLng = marker.getLatLng();
+    });
 }
 
+// Geocode Fix
 async function geocodeAddress(address) {
-const res = await fetch(
-`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`,
-{ headers: { "User-Agent": "VolunteerHub" } }
-);
-const data = await res.json();
-if (!data.length) return null;
-return { lat: +data[0].lat, lng: +data[0].lon };
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+    const data = await res.json();
+    if (!data.length) return null;
+    return { lat: +data[0].lat, lng: +data[0].lon };
 }
 
-// MOVE MAP ON LOCATION INPUT
-document.getElementById("ngoLocation").addEventListener("blur", async () => {
-const value = ngoLocation.value;
-if (!value || value.toLowerCase() === "remote") return;
+document.getElementById("ngoLocation").addEventListener("blur", async (e) => {
+    const value = e.target.value;
+    if (!value || value.toLowerCase() === "remote") return;
 
-const coords = await geocodeAddress(value);
-if (!coords) return alert("Location not found");
+    const coords = await geocodeAddress(value);
+    if (!coords) return alert("Location not found");
 
-map.setView([coords.lat, coords.lng], 15);
-marker.setLatLng([coords.lat, coords.lng]);
-selectedLatLng = marker.getLatLng();
+    map.setView([coords.lat, coords.lng], 15);
+    marker.setLatLng([coords.lat, coords.lng]);
+    selectedLatLng = marker.getLatLng();
 });
 
-// SUBMIT
-opportunityForm.addEventListener("submit", async (e) => {
-e.preventDefault();
+// SUBMIT (merged logic, duplicate removed)
+document.getElementById("opportunityForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const skills = [...document.querySelectorAll("input[name='skills']:checked")].map(cb => cb.value);
-if (!skills.length) return errorMsg.textContent = "Select skills";
+    const skills = [...document.querySelectorAll("input[name='skills']:checked")].map(cb => cb.value);
 
-const locationValue = ngoLocation.value;
+    const data = {
+        ngoName: ngoName.value,
+        title: title.value,
+        description: description.value,
+        slots: Number(slots.value),
+        deadline: new Date(deadline.value),
+        location: ngoLocation.value && selectedLatLng ? {
+            address: ngoLocation.value,
+            lat: selectedLatLng.lat,
+            lng: selectedLatLng.lng
+        } : null,
+        ngoId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        status: 'active'
+    };
 
-const data = {
-ngoName: ngoName.value,
-title: title.value,
-description: description.value,
-skills,
-location: locationValue && selectedLatLng ? {
-address: locationValue,
-lat: selectedLatLng.lat,
-lng: selectedLatLng.lng
-} : null,
-micro: isMicro.checked,
-urgent: isUrgent.checked,
-ngoId: currentUser.uid,
-createdAt: new Date().toISOString()
-};
-
-await addDoc(collection(db, "opportunities"), data);
-successMsg.textContent = "✅ Opportunity Posted";
-e.target.reset();
-loadOpportunities();
+    await addDoc(collection(db, "opportunities"), data);
+    successMsg.textContent = "✅ Opportunity Posted";
+    e.target.reset();
 });
 
-// LOAD
+// LOAD OPPORTUNITIES (single clean version)
 async function loadOpportunities() {
-const snap = await getDocs(query(collection(db,"opportunities"), where("ngoId","==",currentUser.uid)));
-opportunitiesList.innerHTML = snap.empty ? "No posts yet" : "";
-snap.forEach(d => {
-const o = d.data();
-opportunitiesList.innerHTML += `
-<div class="opportunity-item">
-<h3>${o.title}</h3>
-<p>${o.description}</p>
-<p><strong>Location:</strong> ${o.location?.address || "Remote"}</p>
-<button onclick="deleteOpportunity('${d.id}')">Delete</button>
-</div>`;
-});
+    const listContainer = document.getElementById('opportunityList');
+    if(!listContainer) return;
+
+    listContainer.innerHTML = 'Loading...';
+    myOpportunityIds = [];
+
+    const q = query(collection(db,'opportunities'), where('ngoId','==',currentUser.uid));
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+        listContainer.innerHTML = 'No opportunities yet';
+        return;
+    }
+
+    let html='';
+    snap.forEach(d=>{
+        const opp=d.data();
+        myOpportunityIds.push(d.id);
+        html += `
+        <div class="opportunity-item">
+            <h3>${opp.title}</h3>
+            <p>${opp.description}</p>
+            <button onclick="deleteOpportunity('${d.id}')">Delete</button>
+        </div>`;
+    });
+
+    listContainer.innerHTML = html;
 }
 
-window.deleteOpportunity = async id => {
-await deleteDoc(doc(db,"opportunities",id));
-loadOpportunities();
+window.deleteOpportunity = async (oppId) => {
+    await deleteDoc(doc(db, 'opportunities', oppId));
+    loadOpportunities();
 };
-</script>
 
+// LOAD APPLICATIONS (bug fixed: container name)
+async function loadApplications() {
+    const container = document.getElementById('manageApplications');
+    if (!container) return;
+
+    if (!myOpportunityIds.length) {
+        container.innerHTML = '<p>No applicants yet</p>';
+        return;
+    }
+
+    const q = query(collection(db, 'applications'), where('opportunityId', 'in', myOpportunityIds));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        container.innerHTML = '<p>No applicants yet</p>';
+        return;
+    }
+
+    let html = '';
+    snapshot.forEach(docSnap => {
+        const app = docSnap.data();
+        html += `
+            <div class="applicant">
+                <p><strong>Applicant:</strong> ${app.volunteerName}</p>
+                <p><strong>Skills:</strong> ${app.skills?.join(', ')}</p>
+            </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+</script>
 </body>
 </html>
