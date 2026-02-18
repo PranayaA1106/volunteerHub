@@ -70,7 +70,7 @@ html, body {
 }
 
 .panel-top { position: relative; z-index: 1; }
-.panel-top img { width: 320px; height: auto; }
+.panel-top img { width: 160px; height: auto; }
 .panel-top .wordmark {
     font-family: 'Cormorant Garamond', serif;
     font-size: 28px;
@@ -383,7 +383,7 @@ html, body {
         <div class="panel-top">
             <img src="images/volunteerhub-logo.png" alt="VolunteerHub"
                  onerror="this.style.display='none'">
-            
+            <div class="wordmark">VolunteerHub</div>
         </div>
 
         <div class="panel-mid">
@@ -594,9 +594,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (userDoc.exists()) {
             const data = userDoc.data();
-            if      (data.role === 'volunteer') window.location.href = data.profileCompleted ? 'volunteer.html' : 'profile.html';
-            else if (data.role === 'ngo')       window.location.href = 'ngo.html';
-            else { showMsg('loginMsg', 'Unknown account role.', 'error'); setLoading('loginBtn', origHTML, false); }
+            if (data.role === 'volunteer') {
+                // Only go to opportunities if profile is fully done
+                const fullyDone = data.profileCompleted && data.skills?.length && data.interests?.length && data.availability;
+                if (fullyDone) {
+                    window.location.href = 'volunteer.html';
+                } else {
+                    // Tell profile.html this came from login so it can redirect back if already complete
+                    sessionStorage.setItem('fromLogin', 'true');
+                    window.location.href = 'profile.html';
+                }
+            } else if (data.role === 'ngo') {
+                window.location.href = 'ngo.html';
+            } else {
+                showMsg('loginMsg', 'Unknown account role.', 'error');
+                setLoading('loginBtn', origHTML, false);
+            }
         } else {
             // Firestore doc missing — recreate it
             await setDoc(doc(db, 'users', user.uid), {
@@ -604,6 +617,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 role: 'volunteer', profileCompleted: false,
                 createdAt: new Date().toISOString()
             });
+            sessionStorage.setItem('fromLogin', 'true');
             window.location.href = 'profile.html';
         }
     } catch (err) {
@@ -641,8 +655,13 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
             createdAt: new Date().toISOString()
         });
 
-        if      (role === 'volunteer') window.location.href = 'profile.html';
-        else if (role === 'ngo')       window.location.href = 'ngo.html';
+        if (role === 'volunteer') {
+            // New signup — must fill profile. Do NOT set fromLogin flag.
+            sessionStorage.removeItem('fromLogin');
+            window.location.href = 'profile.html';
+        } else if (role === 'ngo') {
+            window.location.href = 'ngo.html';
+        }
 
     } catch (err) {
         setLoading('signupBtn', origHTML, false);
