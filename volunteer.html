@@ -560,6 +560,11 @@ body {
     .main-content { padding: 24px 16px; }
     .opportunities-grid { grid-template-columns: 1fr; }
 }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -576,6 +581,10 @@ body {
             <a href="quiz.html"><i data-lucide="sparkles"></i> Quiz</a>
             <a href="map.html"><i data-lucide="map"></i> Map</a>
             <a href="calendar.html"><i data-lucide="calendar"></i> Calendar</a>
+            <a href="#" onclick="toggleNotifPanel(event)" style="position:relative;">
+                <i data-lucide="bell"></i> Notifications
+                <span id="notifBadge" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--orange-mid);color:white;font-size:10px;font-weight:700;width:19px;height:19px;border-radius:50%;align-items:center;justify-content:center;"></span>
+            </a>
         </nav>
     </div>
     <div class="sidebar-footer">
@@ -587,6 +596,20 @@ body {
 
 <!-- MAIN -->
 <main class="main-content">
+
+    <!-- PROFILE INCOMPLETE BANNER -->
+    <div id="incompleteProfileBanner" style="display:none; align-items:center; gap:14px; background:var(--orange-pale); border:1.5px solid var(--blush); border-radius:18px; padding:18px 22px; margin-bottom:28px;">
+        <div style="width:40px;height:40px;background:var(--blush);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--orange-deep);">
+            <i data-lucide="user-circle"></i>
+        </div>
+        <div style="flex:1;">
+            <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;">Complete your profile to get better matches</div>
+            <div style="font-size:13px;color:var(--ink-light);">Add your skills and interests so we can show you the most relevant opportunities.</div>
+        </div>
+        <a href="profile.html" style="padding:10px 20px;background:linear-gradient(135deg,var(--teal-mid),var(--orange-mid));color:white;border-radius:12px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="arrow-right"></i> Set up profile
+        </a>
+    </div>
 
     <div class="page-header">
         <p class="eyebrow">Volunteer Opportunities</p>
@@ -648,6 +671,29 @@ body {
         </div>
     </div>
 
+
+    <!-- NOTIFICATION PANEL -->
+    <div id="notifPanel" style="display:none;position:fixed;top:0;right:0;width:380px;height:100vh;background:white;z-index:999;box-shadow:-8px 0 40px rgba(0,0,0,0.12);display:none;flex-direction:column;border-left:1.5px solid var(--border);animation:slideIn 0.35s cubic-bezier(0.22,1,0.36,1);">
+        <div style="padding:28px 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+            <div>
+                <p style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--orange-mid);margin-bottom:4px;">Updates</p>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--ink);">Notifications</h2>
+            </div>
+            <button onclick="toggleNotifPanel()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid var(--border);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink-light);transition:all 0.2s;" onmouseover="this.style.background='var(--teal-pale)'" onmouseout="this.style.background='white'">
+                <i data-lucide="x" style="width:16px;height:16px;"></i>
+            </button>
+        </div>
+        <div id="notifList" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:40px 20px;color:var(--ink-light);">
+                <div style="width:52px;height:52px;background:var(--teal-pale);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                    <i data-lucide="bell" style="width:24px;height:24px;color:var(--teal-mid);"></i>
+                </div>
+                <p style="font-size:14px;color:var(--ink-mid);font-weight:600;margin-bottom:4px;">Loading…</p>
+            </div>
+        </div>
+    </div>
+    <div id="notifOverlay" onclick="toggleNotifPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:998;backdrop-filter:blur(2px);"></div>
+
 </main>
 
 <script>
@@ -668,7 +714,7 @@ document.getElementById('chipMatch').addEventListener('change', function() {
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, serverTimestamp, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
@@ -714,14 +760,17 @@ onAuthStateChanged(auth, async (user) => {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
 
         if (userDoc.exists() && userDoc.data().role === 'volunteer') {
-            if (userDoc.data().profileCompleted) {
-                currentUserData = userDoc.data();
-                volunteerSkills = currentUserData.skills || [];
-                await loadApplications();
-                await loadOpportunities();
-            } else {
-                window.location.href = 'profile.html';
+            currentUserData = userDoc.data();
+            volunteerSkills = currentUserData.skills || [];
+
+            if (!currentUserData.profileCompleted) {
+                // Profile incomplete — show a banner, don't redirect (avoids flicker loop)
+                document.getElementById('incompleteProfileBanner').style.display = 'flex';
             }
+
+            await loadApplications();
+            await loadOpportunities();
+            listenVolunteerNotifications(); // real-time NGO → volunteer notifications
         } else {
             window.location.href = 'index.html';
         }
@@ -729,6 +778,78 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = 'index.html';
     }
 });
+
+// ─── Volunteer Notifications (NGO approvals/rejections) ──────────────
+function listenVolunteerNotifications() {
+    const query2 = query(collection(db, 'notifications'),
+        where('recipientId',   '==', currentUser.uid),
+        where('recipientRole', '==', 'volunteer')
+    );
+
+    onSnapshot(query2, snap => {
+        const notifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderVolunteerNotifications(notifs);
+        const unread = notifs.filter(n => !n.read).length;
+        const badge  = document.getElementById('notifBadge');
+        if (badge) {
+            if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.style.display = 'flex'; }
+            else badge.style.display = 'none';
+        }
+    });
+}
+
+function renderVolunteerNotifications(notifs) {
+    const list = document.getElementById('notifList');
+    if (!list) return;
+
+    notifs.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    if (!notifs.length) {
+        list.innerHTML = `
+            <div style="text-align:center;padding:40px 20px;color:var(--ink-light);">
+                <div style="width:52px;height:52px;background:var(--teal-pale);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+                    <i data-lucide="bell" style="width:24px;height:24px;color:var(--teal-mid);"></i>
+                </div>
+                <p style="font-size:14px;color:var(--ink-mid);font-weight:600;margin-bottom:4px;">All caught up!</p>
+                <p style="font-size:13px;">You'll be notified when an NGO responds to your application.</p>
+            </div>`;
+        lucide.createIcons(); return;
+    }
+
+    list.innerHTML = notifs.map(n => {
+        const isApproved = n.type === 'application_approved';
+        const isUnread   = !n.read;
+        const date       = n.createdAt ? new Date(n.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+
+        return `
+            <div onclick="markNotifRead('${n.id}')" style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid ${isUnread ? (isApproved ? 'var(--green-soft)' : 'var(--red-soft)') : 'var(--border)'};background:${isUnread ? (isApproved ? 'var(--green-pale)' : 'var(--red-pale)') : 'white'};cursor:pointer;transition:all 0.2s;animation:fadeUp 0.3s ease both;">
+                <div style="width:40px;height:40px;border-radius:12px;background:${isApproved ? 'linear-gradient(135deg,var(--green),#4ade80)' : 'linear-gradient(135deg,var(--red),#f87171)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="${isApproved ? 'check-circle' : 'x-circle'}" style="width:18px;height:18px;color:white;"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px;">${isApproved ? '🎉 Application Approved!' : 'Application Update'}</div>
+                    <div style="font-size:13px;color:var(--ink-mid);line-height:1.5;margin-bottom:4px;">${n.message || ''}</div>
+                    <div style="font-size:11px;color:var(--ink-light);">${n.ngoName || ''}${date ? ' · ' + date : ''}</div>
+                </div>
+                ${isUnread ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--orange-mid);flex-shrink:0;margin-top:4px;"></span>' : ''}
+            </div>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+window.markNotifRead = async (notifId) => {
+    try { await updateDoc(doc(db,'notifications',notifId),{read:true}); } catch(e){}
+};
+
+window.toggleNotifPanel = function(e) {
+    if (e) e.preventDefault();
+    const panel   = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    const isOpen  = panel.style.display === 'flex';
+    panel.style.display   = isOpen ? 'none'  : 'flex';
+    overlay.style.display = isOpen ? 'none'  : 'block';
+    if (!isOpen) lucide.createIcons();
+};
 
 window.logout = async () => {
     await signOut(auth);
