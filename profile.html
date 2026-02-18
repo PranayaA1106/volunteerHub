@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Your Profile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile-box">
+            <h1>👤 Complete Your Profile</h1>
+            <p class="subtitle">Help us match you with the perfect opportunities</p>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="name" placeholder="Enter your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Location *</label>
+                    <input type="text" id="location" placeholder="City, Country" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Skills *</label>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" name="skills" value="teaching"> Teaching</label>
+                        <label><input type="checkbox" name="skills" value="medical"> Medical</label>
+                        <label><input type="checkbox" name="skills" value="tech"> Technology</label>
+                        <label><input type="checkbox" name="skills" value="design"> Design</label>
+                        <label><input type="checkbox" name="skills" value="writing"> Writing</label>
+                        <label><input type="checkbox" name="skills" value="legal"> Legal</label>
+                        <label><input type="checkbox" name="skills" value="marketing"> Marketing</label>
+                        <label><input type="checkbox" name="skills" value="fundraising"> Fundraising</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Availability *</label>
+                    <select id="availability" required>
+                        <option value="">Select availability</option>
+                        <option value="weekends">Weekends Only</option>
+                        <option value="weekdays">Weekdays</option>
+                        <option value="flexible">Flexible</option>
+                        <option value="one-time">One-Time Events</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Interests *</label>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" name="interests" value="education"> Education</label>
+                        <label><input type="checkbox" name="interests" value="health"> Health</label>
+                        <label><input type="checkbox" name="interests" value="environment"> Environment</label>
+                        <label><input type="checkbox" name="interests" value="animals"> Animals</label>
+                        <label><input type="checkbox" name="interests" value="poverty"> Poverty Relief</label>
+                        <label><input type="checkbox" name="interests" value="children"> Children</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Save & Continue</button>
+                <p class="error-msg" id="error"></p>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+        const firebaseConfig = {
+  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+  authDomain: "volunteerhub-5c419.firebaseapp.com",
+  projectId: "volunteerhub-5c419",
+  storageBucket: "volunteerhub-5c419.firebasestorage.app",
+  messagingSenderId: "769987727654",
+  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        // Check if user is logged in
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                // Load existing profile if any
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().name) {
+                    // Profile already exists, redirect to volunteer page
+                    window.location.href = 'volunteer.html';
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Profile Form Handler
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorMsg = document.getElementById('error');
+
+            if (!currentUser) {
+                errorMsg.textContent = 'Please log in first';
+                return;
+            }
+
+            // Get selected skills
+            const skillsCheckboxes = document.querySelectorAll('input[name="skills"]:checked');
+            const skills = Array.from(skillsCheckboxes).map(cb => cb.value);
+
+            // Get selected interests
+            const interestsCheckboxes = document.querySelectorAll('input[name="interests"]:checked');
+            const interests = Array.from(interestsCheckboxes).map(cb => cb.value);
+
+            if (skills.length === 0) {
+                errorMsg.textContent = 'Please select at least one skill';
+                return;
+            }
+
+            if (interests.length === 0) {
+                errorMsg.textContent = 'Please select at least one interest';
+                return;
+            }
+
+            const profileData = {
+                name: document.getElementById('name').value,
+                location: document.getElementById('location').value,
+                skills: skills,
+                availability: document.getElementById('availability').value,
+                interests: interests,
+                profileCompleted: true,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                // Update user document in Firestore
+                await setDoc(doc(db, 'users', currentUser.uid), profileData, { merge: true });
+                
+                // Redirect to volunteer feed
+                window.location.href = 'volunteer.html';
+            } catch (error) {
+                errorMsg.textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html>

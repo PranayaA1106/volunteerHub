@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Your Cause</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h2>🤝 VolunteerHub</h2>
+        <div class="nav-links">
+            <a href="volunteer.html">Opportunities</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="quiz.html" class="active">Quiz</a>
+            <a href="map.html">Map</a>
+            <button onclick="logout()" class="btn-secondary">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="quiz-container">
+            <h1>🧭 Discover Your Perfect Cause</h1>
+            <p class="subtitle">Answer a few questions to find causes that align with your passions</p>
+
+            <form id="quizForm">
+                <!-- Question 1 -->
+                <div class="quiz-question">
+                    <h3>1. What excites you most?</h3>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="people" required>
+                            <span>👥 Working with people and communities</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="tech">
+                            <span>💻 Technology and innovation</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="environment">
+                            <span>🌱 Nature and environment</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q1" value="animals">
+                            <span>🐾 Animals and wildlife</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-question">
+                    <h3>2. How much time can you commit?</h3>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="one-time" required>
+                            <span>⚡ One-time events only</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="short">
+                            <span>⏱ Short tasks (30-60 min)</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="regular">
+                            <span>📅 Regular commitment (weekly/monthly)</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q2" value="flexible">
+                            <span>🔄 Flexible, as needed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-question">
+                    <h3>3. What type of work appeals to you?</h3>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="teaching" required>
+                            <span>📚 Teaching and mentoring</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="design">
+                            <span>🎨 Creative and design work</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="medical">
+                            <span>⚕️ Healthcare and medical support</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q3" value="hands-on">
+                            <span>🔨 Hands-on physical work</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-question">
+                    <h3>4. Who do you want to help most?</h3>
+                    <div class="quiz-options">
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="children" required>
+                            <span>👶 Children and youth</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="elderly">
+                            <span>👴 Elderly and seniors</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="poverty">
+                            <span>🤲 People in poverty</span>
+                        </label>
+                        <label class="quiz-option">
+                            <input type="radio" name="q4" value="everyone">
+                            <span>🌍 Everyone equally</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">See My Perfect Cause 🎯</button>
+            </form>
+
+            <!-- Results (hidden initially) -->
+            <div id="results" class="quiz-results" style="display: none;">
+                <h2>✨ Your Perfect Cause</h2>
+                <div class="result-card">
+                    <div class="result-icon" id="resultIcon"></div>
+                    <h3 id="resultCause"></h3>
+                    <p id="resultDescription"></p>
+                    <div class="suggested-skills">
+                        <h4>Suggested Skills to Develop:</h4>
+                        <div id="suggestedSkills"></div>
+                    </div>
+                    <button onclick="window.location.href='volunteer.html'" class="btn-primary">
+                        Find Opportunities →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+        const firebaseConfig = {
+  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+  authDomain: "volunteerhub-5c419.firebaseapp.com",
+  projectId: "volunteerhub-5c419",
+  storageBucket: "volunteerhub-5c419.firebasestorage.app",
+  messagingSenderId: "769987727654",
+  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        // Check authentication
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Logout
+        window.logout = async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        };
+
+        // Cause mapping logic
+        const causeMap = {
+            'people-teaching-children': {
+                cause: 'Education for Children',
+                icon: '📚',
+                description: 'You have a passion for teaching and nurturing young minds. Education NGOs focused on child literacy and learning would be perfect for you!',
+                skills: ['teaching', 'writing', 'design']
+            },
+            'people-teaching-elderly': {
+                cause: 'Adult Education & Senior Support',
+                icon: '👴',
+                description: 'You care about lifelong learning and supporting seniors. Consider NGOs that provide education and companionship to elderly communities.',
+                skills: ['teaching', 'medical', 'writing']
+            },
+            'people-teaching-poverty': {
+                cause: 'Education for Underprivileged',
+                icon: '📖',
+                description: 'You want to break the cycle of poverty through education. Look for NGOs providing free education and skill training to underprivileged communities.',
+                skills: ['teaching', 'fundraising', 'marketing']
+            },
+            'tech-design-everyone': {
+                cause: 'Technology for Social Good',
+                icon: '💻',
+                description: 'You believe in using technology to solve social problems. Tech-for-good NGOs need volunteers like you to build digital solutions.',
+                skills: ['tech', 'design', 'marketing']
+            },
+            'environment-hands-on-everyone': {
+                cause: 'Environmental Conservation',
+                icon: '🌱',
+                description: 'You\'re passionate about protecting our planet. Environmental NGOs need hands-on volunteers for conservation and awareness projects.',
+                skills: ['fundraising', 'marketing', 'writing']
+            },
+            'animals-hands-on-everyone': {
+                cause: 'Animal Welfare',
+                icon: '🐾',
+                description: 'You have a deep love for animals. Animal welfare organizations need dedicated volunteers for rescue, care, and advocacy work.',
+                skills: ['medical', 'fundraising', 'marketing']
+            },
+            'medical-children': {
+                cause: 'Child Health & Nutrition',
+                icon: '⚕️',
+                description: 'You care about children\'s health and wellbeing. Health-focused NGOs working with children need medical and support volunteers.',
+                skills: ['medical', 'teaching', 'fundraising']
+            },
+            'medical-elderly': {
+                cause: 'Elderly Healthcare',
+                icon: '🏥',
+                description: 'You want to provide care and dignity to seniors. Elder care organizations need compassionate medical and support volunteers.',
+                skills: ['medical', 'fundraising']
+            },
+            'poverty-everyone': {
+                cause: 'Poverty Alleviation',
+                icon: '🤲',
+                description: 'You\'re driven to help those in need. Poverty relief NGOs need volunteers for fundraising, distribution, and community support.',
+                skills: ['fundraising', 'legal', 'marketing']
+            },
+            'default': {
+                cause: 'Community Service',
+                icon: '❤️',
+                description: 'You have a generous heart that wants to help in multiple ways. Look for versatile NGOs that work across various causes!',
+                skills: ['marketing', 'writing', 'fundraising']
+            }
+        };
+
+        // Quiz submission
+        document.getElementById('quizForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const q1 = document.querySelector('input[name="q1"]:checked').value;
+            const q2 = document.querySelector('input[name="q2"]:checked').value;
+            const q3 = document.querySelector('input[name="q3"]:checked').value;
+            const q4 = document.querySelector('input[name="q4"]:checked').value;
+
+            // Simple mapping logic
+            let causeKey = 'default';
+
+            // Primary mapping based on Q1 (interest) + Q3 (work type) + Q4 (beneficiary)
+            if (q1 === 'people' && q3 === 'teaching') {
+                causeKey = `people-teaching-${q4}`;
+            } else if (q1 === 'tech' && q3 === 'design') {
+                causeKey = 'tech-design-everyone';
+            } else if (q1 === 'environment' && q3 === 'hands-on') {
+                causeKey = 'environment-hands-on-everyone';
+            } else if (q1 === 'animals') {
+                causeKey = 'animals-hands-on-everyone';
+            } else if (q3 === 'medical') {
+                causeKey = `medical-${q4}`;
+            } else if (q4 === 'poverty') {
+                causeKey = 'poverty-everyone';
+            }
+
+            const result = causeMap[causeKey] || causeMap['default'];
+
+            // Display results
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultCause').textContent = result.cause;
+            document.getElementById('resultDescription').textContent = result.description;
+            
+            const skillsHtml = result.skills.map(skill => 
+                `<span class="skill-tag">${skill}</span>`
+            ).join('');
+            document.getElementById('suggestedSkills').innerHTML = skillsHtml;
+
+            // Save to Firestore
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    preferredCause: result.cause,
+                    quizCompleted: true,
+                    quizAnswers: { q1, q2, q3, q4 }
+                });
+            } catch (error) {
+                console.error('Error saving quiz result:', error);
+            }
+
+            // Show results
+            document.getElementById('quizForm').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

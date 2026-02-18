@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Opportunities</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h2>🤝 VolunteerHub</h2>
+        <div class="nav-links">
+            <a href="volunteer.html" class="active">Opportunities</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="quiz.html">Quiz</a>
+            <a href="map.html">Map</a>
+            <button onclick="logout()" class="btn-secondary">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="feed-header">
+            <h1>🌟 Opportunities For You</h1>
+            <p id="matchInfo" class="match-info"></p>
+            
+            <div class="filters">
+                <label>
+                    <input type="checkbox" id="filterUrgent"> 🚨 Urgent Only
+                </label>
+                <label>
+                    <input type="checkbox" id="filterMicro"> ⏱ Quick Tasks Only
+                </label>
+                <label>
+                    <input type="checkbox" id="filterMatched"> ✔ My Skills Only
+                </label>
+            </div>
+        </div>
+
+        <div id="opportunitiesFeed">
+            <p class="loading">Loading opportunities...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+       const firebaseConfig = {
+  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+  authDomain: "volunteerhub-5c419.firebaseapp.com",
+  projectId: "volunteerhub-5c419",
+  storageBucket: "volunteerhub-5c419.firebasestorage.app",
+  messagingSenderId: "769987727654",
+  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let volunteerSkills = [];
+        let appliedOpportunities = new Set();
+
+        // Check authentication
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists() && userDoc.data().role === 'volunteer') {
+                    if (userDoc.data().profileCompleted) {
+                        volunteerSkills = userDoc.data().skills || [];
+                        await loadApplications();
+                        await loadOpportunities();
+                    } else {
+                        window.location.href = 'profile.html';
+                    }
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Logout
+        window.logout = async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        };
+
+        // Load user's applications
+        async function loadApplications() {
+            try {
+                const q = query(
+                    collection(db, 'applications'),
+                    where('volunteerId', '==', currentUser.uid)
+                );
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    appliedOpportunities.add(doc.data().opportunityId);
+                });
+            } catch (error) {
+                console.error('Error loading applications:', error);
+            }
+        }
+
+        // Load and display opportunities
+        async function loadOpportunities() {
+            const feedContainer = document.getElementById('opportunitiesFeed');
+            const matchInfo = document.getElementById('matchInfo');
+
+            try {
+                const querySnapshot = await getDocs(collection(db, 'opportunities'));
+                
+                if (querySnapshot.empty) {
+                    feedContainer.innerHTML = '<p class="empty-state">No opportunities available yet. Check back soon!</p>';
+                    return;
+                }
+
+                let opportunities = [];
+                querySnapshot.forEach((doc) => {
+                    const opp = { id: doc.id, ...doc.data() };
+                    
+                    // Calculate matching skills
+                    const matchedSkills = volunteerSkills.filter(skill => 
+                        opp.skills.includes(skill)
+                    );
+                    
+                    opp.matchedSkills = matchedSkills;
+                    opp.matchCount = matchedSkills.length;
+                    opp.isApplied = appliedOpportunities.has(doc.id);
+                    
+                    opportunities.push(opp);
+                });
+
+                // Sort opportunities: Urgent first, then micro-tasks, then by match count
+                opportunities.sort((a, b) => {
+                    if (a.urgent && !b.urgent) return -1;
+                    if (!a.urgent && b.urgent) return 1;
+                    if (a.micro && !b.micro) return -1;
+                    if (!a.micro && b.micro) return 1;
+                    return b.matchCount - a.matchCount;
+                });
+
+                // Display match info
+                const perfectMatches = opportunities.filter(o => o.matchCount > 0).length;
+                matchInfo.textContent = `Found ${opportunities.length} opportunities • ${perfectMatches} match your skills`;
+
+                displayOpportunities(opportunities);
+                
+                // Add filter listeners
+                document.getElementById('filterUrgent').addEventListener('change', () => filterOpportunities(opportunities));
+                document.getElementById('filterMicro').addEventListener('change', () => filterOpportunities(opportunities));
+                document.getElementById('filterMatched').addEventListener('change', () => filterOpportunities(opportunities));
+                
+            } catch (error) {
+                feedContainer.innerHTML = `<p class="error-msg">Error loading opportunities: ${error.message}</p>`;
+            }
+        }
+
+        // Filter opportunities
+        function filterOpportunities(allOpportunities) {
+            const filterUrgent = document.getElementById('filterUrgent').checked;
+            const filterMicro = document.getElementById('filterMicro').checked;
+            const filterMatched = document.getElementById('filterMatched').checked;
+
+            let filtered = allOpportunities;
+
+            if (filterUrgent) {
+                filtered = filtered.filter(o => o.urgent);
+            }
+            if (filterMicro) {
+                filtered = filtered.filter(o => o.micro);
+            }
+            if (filterMatched) {
+                filtered = filtered.filter(o => o.matchCount > 0);
+            }
+
+            displayOpportunities(filtered);
+        }
+
+        // Display opportunities
+        function displayOpportunities(opportunities) {
+            const feedContainer = document.getElementById('opportunitiesFeed');
+
+            if (opportunities.length === 0) {
+                feedContainer.innerHTML = '<p class="empty-state">No opportunities match your filters</p>';
+                return;
+            }
+
+            let html = '<div class="opportunities-grid">';
+            
+            opportunities.forEach(opp => {
+                const hasMatch = opp.matchCount > 0;
+                
+                html += `
+                    <div class="opportunity-card ${hasMatch ? 'has-match' : ''}">
+                        <div class="card-header">
+                            <h3>${opp.title}</h3>
+                            <div class="badges">
+                                ${opp.urgent ? '<span class="badge urgent">🚨 Urgent</span>' : ''}
+                                ${opp.micro ? '<span class="badge micro">⏱ Quick Help (30-60 min)</span>' : ''}
+                                ${hasMatch ? '<span class="badge match">✔ Matches Your Skills</span>' : ''}
+                            </div>
+                        </div>
+                        
+                        <p class="ngo-name">🏢 ${opp.ngoName}</p>
+                        <p class="description">${opp.description}</p>
+                        
+                        <div class="skills-needed">
+                            <strong>Skills Needed:</strong>
+                            <div class="skill-tags">
+                                ${opp.skills.map(skill => {
+                                    const isMatch = volunteerSkills.includes(skill);
+                                    return `<span class="skill-tag ${isMatch ? 'matched' : ''}">${skill}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        
+                        <p class="location">📍 ${opp.location}</p>
+                        
+                        ${opp.isApplied 
+                            ? '<button class="btn-applied" disabled>✓ Applied</button>'
+                            : `<button onclick="applyForOpportunity('${opp.id}')" class="btn-primary">Volunteer Now</button>`
+                        }
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            feedContainer.innerHTML = html;
+        }
+
+        // Apply for opportunity
+        window.applyForOpportunity = async (opportunityId) => {
+            try {
+                await addDoc(collection(db, 'applications'), {
+                    opportunityId: opportunityId,
+                    volunteerId: currentUser.uid,
+                    appliedAt: new Date().toISOString(),
+                    status: 'pending'
+                });
+
+                appliedOpportunities.add(opportunityId);
+                alert('✅ Application submitted successfully!');
+                
+                // Reload to update UI
+                await loadOpportunities();
+            } catch (error) {
+                alert('Error applying: ' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

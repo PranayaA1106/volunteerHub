@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+/* ===== MODERN DASHBOARD LAYOUT ===== */
+
+body {
+    margin: 0;
+    background: linear-gradient(180deg, #496a75, #4e9aa6);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-title svg {
+    width: 50px;
+    height: 50px;
+    color: #4e9aa6;
+}
+
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    padding: 35px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: linear-gradient(180deg, #496a75, #4e9aa6);
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+
+    box-shadow: 
+        10px 0 30px rgba(0,0,0,0.15);
+
+    position: relative;
+    overflow: hidden;
+}
+
+
+.sidebar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    margin-bottom: 50px;
+    letter-spacing: 1px;
+}
+
+h1, h2 {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 1px;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(6px);
+}
+
+.sidebar a.active {
+    background: white;
+    color: #496a75;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+
+.logo {
+    margin-bottom: 50px;
+}
+
+.logo img {
+    width: 180px;
+    height: auto;
+    display: block;
+}
+
+.logout-btn {
+    background: white;
+    color: #496a75;
+    border: none;
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+
+/* Main Area */
+.main-content {
+    flex: 1;
+    background: linear-gradient(180deg, #f7f9fb, #eef2f6);
+    padding: 40px;
+    border-radius: 30px 0 0 30px;
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+}
+
+/* Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 20px;
+}
+
+/* Hero Card */
+.hero-card {
+    background: linear-gradient(135deg, #4e9aa6, #f6c1a9);
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 
+        0 20px 50px rgba(0,0,0,0.15),
+        inset 0 0 40px rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-card::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(135deg, #4e9aa6, #f6c1a9);
+    top: -50%;
+    left: -50%;
+    transform: rotate(25deg);
+}
+
+
+.big-number {
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #ffffff, #ffe6d8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+.impact-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.impact-ring {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring__background {
+    fill: transparent;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 10;
+}
+
+.progress-ring__circle {
+    fill: transparent;
+    stroke: url(#gradientStroke);
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    transition: stroke-dashoffset 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ring-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: white;
+}
+
+
+/* Small Stats */
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    transition: 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4e9aa6, #f6c1a9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.stat-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.stat-label {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin: 0;
+}
+
+.stat-number {
+    font-size: 75px;
+    font-weight: 700;
+    color: #4e9aa6;
+    margin: 8px 0;
+    text-align: center;
+}
+.ngo-stat-number {
+    font-size: 50px;
+    font-weight: 700;
+    color: #4e9aa6;
+    margin: 8px 0;
+    text-align: center;
+}
+.stat-foot {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+}
+
+/* Full Width Cards */
+.full-width {
+    grid-column: span 3;
+}
+
+.dashboard-grid > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+}
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.section-header svg {
+    width: 20px;
+    height: 20px;
+    color: #4e9aa6;
+}
+.application-item {
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #eef2f6;
+    margin-bottom: 15px;
+    transition: 0.3s ease;
+}
+
+.application-item:hover {
+    background: #f9fbfc;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.05);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.status-badge.approved {
+    background: #e6f7ef;
+    color: #0f9d58;
+}
+
+.status-badge.pending {
+    background: #fff4e5;
+    color: #f57c00;
+}
+
+.status-badge.rejected {
+    background: #fdecea;
+    color: #d32f2f;
+}
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tag {
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: #4e9aa6;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.skill-tag:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.skill-tag.interest {
+    background: #eef2f6;
+    color: #4e9aa6;
+}
+
+
+.dashboard-grid > *:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-grid > *:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-grid > *:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-grid > *:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div>
+            <div class="logo">
+    <img src="images/volunteerhub-logo.png" alt="VolunteerHub Logo">
+</div>
+
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="volunteer.html">Opportunities</a>
+            <a href="quiz.html">Quiz</a>
+            <a href="map.html">Map</a>
+        </div>
+
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+
+      <div class="dashboard-header">
+   <h1 class="page-title">
+    <i data-lucide="bar-chart-3"></i>
+    Your Impact Dashboard
+</h1>
+
+</div>
+
+
+        <div class="dashboard-grid">
+
+            <!-- HERO CARD -->
+            <div class="hero-card">
+    <h3>Hours Contributed</h3>
+
+    <div class="impact-wrapper">
+        <div>
+            <div class="big-number" id="totalHours" data-target="320">0</div>
+            <p id="journeyText">Loading your impact...</p>
+        </div>
+
+        <div class="impact-ring">
+    <svg class="progress-ring" width="140" height="140">
+        <circle
+            class="progress-ring__background"
+            cx="70"
+            cy="70"
+            r="60"
+        />
+        <circle
+            class="progress-ring__circle"
+            cx="70"
+            cy="70"
+            r="60"
+            id="progressCircle"
+        />
+        <defs>
+    <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ff6a00"/>
+        <stop offset="100%" stop-color="#00c896"/>
+    </linearGradient>
+</defs>
+
+    </svg>
+    <div class="ring-label" id="impactLevel">Beginner</div>
+</div>
+
+    </div>
+</div>
+
+
+            <!-- SMALL STATS -->
+            <div class="stat-card">
+    <div class="stat-top">
+        <div class="stat-icon">
+            <i data-lucide="check-square"></i>
+        </div>
+        <p class="stat-label">Total Tasks</p>
+    </div>
+
+    <div class="stat-number" id="totalTasks">0</div>
+    <p class="stat-foot">Completed volunteer activities</p>
+</div>
+
+
+            <div class="stat-card">
+    <div class="stat-top">
+        <div class="stat-icon">
+            <i data-lucide="layers"></i>
+        </div>
+        <p class="stat-label">Total Causes</p>
+    </div>
+
+    <div class="stat-number" id="totalCauses">0</div>
+    <p class="stat-foot">Areas you’ve contributed to</p>
+</div>
+
+
+            <div class="stat-card">
+    <div class="stat-top">
+        <div class="stat-icon">
+            <i data-lucide="building-2"></i>
+        </div>
+        <p class="stat-label">Partner NGOs</p>
+    </div>
+
+    <div class="ngo-stat-number" id="totalNGOs">0</div>
+    <p class="stat-foot">Organizations you’ve worked with</p>
+</div>
+
+
+            <!-- Applications -->
+            <div class="card full-width">
+                <div class="section-header">
+    <i data-lucide="file-text"></i>
+    <h2>Your Applications</h2>
+</div>
+
+                <div id="applicationsList">
+                    <p class="loading">Loading...</p>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card full-width">
+                <div class="section-header">
+    <i data-lucide="sparkles"></i>
+    <h2>Your Skills</h2>
+</div>
+
+                <div id="skillsOverview"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script type="module">
+/* ===== YOUR ORIGINAL JS (UNCHANGED) ===== */
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+  authDomain: "volunteerhub-5c419.firebaseapp.com",
+  projectId: "volunteerhub-5c419",
+  storageBucket: "volunteerhub-5c419.firebasestorage.app",
+  messagingSenderId: "769987727654",
+  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user;
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (userDoc.exists() && userDoc.data().role === 'volunteer') {
+            loadDashboard(userDoc.data());
+        } else {
+            window.location.href = 'index.html';
+        }
+    } else {
+        window.location.href = 'index.html';
+    }
+});
+
+window.logout = async () => {
+    await signOut(auth);
+    window.location.href = 'index.html';
+};
+
+async function loadDashboard(userData) {
+    try {
+        const applicationsQuery = query(
+            collection(db, 'applications'),
+            where('volunteerId', '==', currentUser.uid)
+        );
+
+        const applicationsSnapshot = await getDocs(applicationsQuery);
+
+        const totalTasks = applicationsSnapshot.size;
+        const totalHours = totalTasks * 2;
+
+        const ngoSet = new Set();
+        const causesSet = new Set();
+        const applicationsList = [];
+
+        for (const appDoc of applicationsSnapshot.docs) {
+            const app = appDoc.data();
+            const oppDoc = await getDoc(doc(db, 'opportunities', app.opportunityId));
+
+            if (oppDoc.exists()) {
+                const opp = oppDoc.data();
+                ngoSet.add(opp.ngoName);
+                opp.skills.forEach(skill => causesSet.add(skill));
+
+                applicationsList.push({
+                    ...app,
+                    opportunity: opp,
+                    id: appDoc.id
+                });
+            }
+        }
+
+        animateHours(totalHours);
+        // animateHours(250);
+
+
+        document.getElementById('totalTasks').textContent = totalTasks;
+        document.getElementById('totalCauses').textContent = causesSet.size;
+        document.getElementById('totalNGOs').textContent = ngoSet.size;
+
+        generateImpactMessage(totalHours, causesSet, userData.name);
+        displayApplications(applicationsList);
+        displaySkills(userData.skills, userData.interests);
+
+    } catch (error) {
+        document.getElementById('applicationsList').innerHTML =
+            `<p class="error-msg">Error loading data: ${error.message}</p>`;
+    }
+}
+
+function generateImpactMessage(hours, causes, name) {
+    const journeyText = document.getElementById('journeyText');
+    const causesArray = Array.from(causes);
+
+    let message = '';
+
+    if (hours === 0) {
+        message = `Welcome ${name || 'Volunteer'}! 🎉 You're just getting started.`;
+    } else if (hours < 10) {
+        message = `Amazing start ${name || 'Volunteer'}! 🌱 ${hours} hours contributed.`;
+    } else if (hours < 50) {
+        message = `Incredible work ${name || 'Volunteer'}! 🌟 ${hours} hours dedicated.`;
+    } else {
+        message = `You're a champion ${name || 'Volunteer'}! 🏆 ${hours} hours contributed!`;
+    }
+
+    journeyText.innerHTML = message;
+}
+
+function displayApplications(applications) {
+    const listContainer = document.getElementById('applicationsList');
+
+    if (applications.length === 0) {
+        listContainer.innerHTML = '<p class="empty-state">No applications yet.</p>';
+        return;
+    }
+
+    let html = '<div class="applications-list">';
+
+    applications.forEach(app => {
+        const date = new Date(app.appliedAt).toLocaleDateString();
+        html += `
+            <div class="application-item">
+                <div class="app-header">
+                    <h3>${app.opportunity.title}</h3>
+                    <span class="status-badge ${app.status}">${app.status}</span>
+                </div>
+                <p class="ngo-name">🏢 ${app.opportunity.ngoName}</p>
+                <p class="app-date">📅 Applied: ${date}</p>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    listContainer.innerHTML = html;
+}
+
+function displaySkills(skills, interests) {
+    const container = document.getElementById('skillsOverview');
+    let html = '<div class="skills-section">';
+
+    if (skills && skills.length > 0) {
+        html += '<h3>Your Skills</h3><div class="skill-tags">';
+        skills.forEach(skill => {
+            html += `<span class="skill-tag">${skill}</span>`;
+        });
+        html += '</div>';
+    }
+
+    if (interests && interests.length > 0) {
+        html += '<h3>Your Interests</h3><div class="skill-tags">';
+        interests.forEach(interest => {
+            html += `<span class="skill-tag interest">${interest}</span>`;
+        });
+        html += '</div>';
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function animateHours(hours) {
+    const counter = document.getElementById("totalHours");
+    let count = 0;
+    const duration = 1200; 
+    const startTime = performance.now();
+
+    function update(currentTime) {
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        const eased = easeOutCubic(progress);
+        const value = Math.floor(eased * hours);
+
+        counter.textContent = value;
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            counter.textContent = hours;
+            updateImpactRing(hours);
+
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+}
+
+function updateImpactRing(hours) {
+    const circle = document.getElementById("progressCircle");
+    const label = document.getElementById("impactLevel");
+
+    const radius = 60;
+    const circumference = 2 * Math.PI * radius;
+
+    let maxHours = 200; // define full circle max
+    let progress = Math.min(hours / maxHours, 1);
+
+    const offset = circumference - progress * circumference;
+    circle.style.strokeDashoffset = offset;
+
+    let level;
+
+    if (hours === 0) level = "Start 🌱";
+    else if (hours < 10) level = "Rising ⭐";
+    else if (hours < 50) level = "Impactful 🌟";
+    else if (hours < 150) level = "Champion 🏆";
+    else level = "Legend👑";
+
+    label.textContent = level;
+}
+lucide.createIcons();
+
+</script>
+
+</body>
+</html>

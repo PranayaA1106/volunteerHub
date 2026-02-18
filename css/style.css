@@ -1,0 +1,895 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #1f2937;
+    --light: #f9fafb;
+    --border: #e5e7eb;
+    --text: #374151;
+    --text-light: #6b7280;
+    --success: #10b981;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.navbar h2 {
+    color: var(--primary);
+    font-size: 24px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Auth Box */
+.auth-box {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 450px;
+    margin: 50px auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.auth-box h1 {
+    text-align: center;
+    color: var(--primary);
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.tagline {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.tab-btn:hover {
+    border-color: var(--primary);
+}
+
+/* Form Styles */
+.auth-form h2 {
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.role-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+    padding: 8px 16px;
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-applied {
+    background: var(--secondary);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: not-allowed;
+}
+
+.btn-delete {
+    background: var(--danger);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+}
+
+.btn-view {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.btn-large {
+    padding: 18px;
+    font-size: 18px;
+}
+
+/* Messages */
+.error-msg {
+    color: var(--danger);
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.success-msg {
+    color: var(--success);
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.loading {
+    text-align: center;
+    color: var(--text-light);
+    padding: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-light);
+    padding: 40px;
+    font-size: 16px;
+}
+
+/* Profile Box */
+.profile-box {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 700px;
+    margin: 30px auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.profile-box h1 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.checkbox-grid label {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.checkbox-grid label:hover {
+    border-color: var(--primary);
+    background: #f0f0ff;
+}
+
+.checkbox-grid input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+    cursor: pointer;
+}
+
+/* NGO Container */
+.ngo-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    color: var(--dark);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.checkbox-label input {
+    margin-right: 8px;
+    width: auto;
+}
+
+/* Opportunity Item */
+.opportunity-item {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.opp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.opp-header h3 {
+    color: var(--dark);
+    font-size: 18px;
+}
+
+/* Badges */
+.badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge.urgent {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge.micro {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge.match {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+/* Volunteer Feed */
+.feed-header {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.feed-header h1 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.match-info {
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filters label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.filters label:hover {
+    border-color: var(--primary);
+    background: #f0f0ff;
+}
+
+.filters input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+}
+
+/* Opportunities Grid */
+.opportunities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.opportunity-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.opportunity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.opportunity-card.has-match {
+    border-color: var(--secondary);
+}
+
+.card-header {
+    margin-bottom: 15px;
+}
+
+.card-header h3 {
+    color: var(--dark);
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.ngo-name {
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.description {
+    color: var(--text);
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.skills-needed {
+    margin-bottom: 15px;
+}
+
+.skill-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.skill-tag {
+    padding: 6px 12px;
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.skill-tag.matched {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #10b981;
+    font-weight: 600;
+}
+
+.skill-tag.interest {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+
+.location {
+    color: var(--text-light);
+    margin-bottom: 15px;
+}
+
+/* Dashboard */
+.dashboard-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.dashboard-container h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.dashboard-container .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 30px;
+}
+
+.impact-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.impact-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.impact-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.impact-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.impact-label {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.impact-message {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.impact-message h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+#journeyText {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text);
+}
+
+.applications-list {
+    display: grid;
+    gap: 15px;
+}
+
+.application-item {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.app-header h3 {
+    color: var(--dark);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.app-date {
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.app-badges {
+    margin-top: 10px;
+}
+
+.skills-section h3 {
+    color: var(--dark);
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.skills-section h3:first-child {
+    margin-top: 0;
+}
+
+/* Quiz */
+.quiz-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.quiz-container h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.quiz-container .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 30px;
+}
+
+#quizForm {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.quiz-question {
+    margin-bottom: 40px;
+}
+
+.quiz-question h3 {
+    color: var(--dark);
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.quiz-options {
+    display: grid;
+    gap: 15px;
+}
+
+.quiz-option {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.quiz-option:hover {
+    border-color: var(--primary);
+    background: #f0f0ff;
+}
+
+.quiz-option input[type="radio"] {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.quiz-option span {
+    font-size: 16px;
+    color: var(--text);
+}
+
+.quiz-results {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.quiz-results h2 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.result-card {
+    text-align: center;
+}
+
+.result-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.result-card h3 {
+    color: var(--dark);
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.result-card p {
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.suggested-skills h4 {
+    color: var(--dark);
+    margin-bottom: 15px;
+}
+
+.suggested-skills .skill-tags {
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* Map */
+.map-container h1 {
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.map-container .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 30px;
+}
+
+.map-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.map-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.map-instruction {
+    margin-top: 15px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.ngo-list-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.ngo-list-section h2 {
+    color: var(--dark);
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    background: white;
+    padding-bottom: 10px;
+}
+
+.ngo-cards {
+    display: grid;
+    gap: 15px;
+}
+
+.ngo-card {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.ngo-card:hover {
+    border-color: var(--primary);
+    background: #f9fafb;
+}
+
+.ngo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ngo-header h3 {
+    color: var(--dark);
+    font-size: 18px;
+}
+
+.needs {
+    margin-top: 15px;
+}
+
+.needs strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .opportunities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .impact-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .map-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

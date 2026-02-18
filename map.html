@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGOs Near You</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h2>🤝 VolunteerHub</h2>
+        <div class="nav-links">
+            <a href="volunteer.html">Opportunities</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="quiz.html">Quiz</a>
+            <a href="map.html" class="active">Map</a>
+            <button onclick="logout()" class="btn-secondary">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="map-container">
+            <h1>🗺️ NGOs Near You</h1>
+            <p class="subtitle">Discover volunteer opportunities in your area</p>
+
+            <div class="map-layout">
+                <!-- Map Section -->
+                <div class="map-section">
+                    <div class="map-placeholder">
+                        <!-- Google Maps Iframe (Replace with your embedded map) -->
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.30596073366!2d-74.25986548248684!3d40.69714941932609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s"
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <p class="map-instruction">
+                        💡 <strong>Pro Tip:</strong> Replace the iframe src with your custom Google Maps embed URL showing NGO locations
+                    </p>
+                </div>
+
+                <!-- NGO List Section -->
+                <div class="ngo-list-section">
+                    <h2>📍 Active NGOs</h2>
+                    <div id="ngoList">
+                        <p class="loading">Loading NGOs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+        const firebaseConfig = {
+  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+  authDomain: "volunteerhub-5c419.firebaseapp.com",
+  projectId: "volunteerhub-5c419",
+  storageBucket: "volunteerhub-5c419.firebasestorage.app",
+  messagingSenderId: "769987727654",
+  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check authentication
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadNGOs();
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Logout
+        window.logout = async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        };
+
+        // Load NGOs from opportunities
+        async function loadNGOs() {
+            const listContainer = document.getElementById('ngoList');
+
+            try {
+                const querySnapshot = await getDocs(collection(db, 'opportunities'));
+
+                if (querySnapshot.empty) {
+                    listContainer.innerHTML = '<p class="empty-state">No NGOs found yet</p>';
+                    return;
+                }
+
+                // Group opportunities by NGO
+                const ngoMap = new Map();
+
+                querySnapshot.forEach((doc) => {
+                    const opp = doc.data();
+                    
+                    if (!ngoMap.has(opp.ngoName)) {
+                        ngoMap.set(opp.ngoName, {
+                            name: opp.ngoName,
+                            location: opp.location,
+                            opportunities: [],
+                            skills: new Set()
+                        });
+                    }
+
+                    const ngo = ngoMap.get(opp.ngoName);
+                    ngo.opportunities.push(opp);
+                    opp.skills.forEach(skill => ngo.skills.add(skill));
+                });
+
+                // Display NGO list
+                let html = '<div class="ngo-cards">';
+
+                ngoMap.forEach((ngo, name) => {
+                    const skillsArray = Array.from(ngo.skills);
+                    html += `
+                        <div class="ngo-card">
+                            <div class="ngo-header">
+                                <h3>🏢 ${name}</h3>
+                                <span class="badge">${ngo.opportunities.length} opportunities</span>
+                            </div>
+                            <p class="location">📍 ${ngo.location}</p>
+                            <div class="needs">
+                                <strong>Skills Needed:</strong>
+                                <div class="skill-tags">
+                                    ${skillsArray.slice(0, 5).map(skill => 
+                                        `<span class="skill-tag">${skill}</span>`
+                                    ).join('')}
+                                    ${skillsArray.length > 5 ? '<span class="skill-tag">+' + (skillsArray.length - 5) + ' more</span>' : ''}
+                                </div>
+                            </div>
+                            <button onclick="window.location.href='volunteer.html'" class="btn-view">
+                                View Opportunities →
+                            </button>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                listContainer.innerHTML = html;
+
+            } catch (error) {
+                listContainer.innerHTML = `<p class="error-msg">Error loading NGOs: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
