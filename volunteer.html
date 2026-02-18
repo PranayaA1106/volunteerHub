@@ -3,257 +3,942 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Opportunities</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Opportunities — VolunteerHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --teal-deep:   #2d6a75;
+    --teal-mid:    #4e9aa6;
+    --teal-soft:   #b8dde3;
+    --teal-pale:   #e8f5f7;
+    --orange-mid:  #f0a070;
+    --orange-deep: #d4743a;
+    --orange-pale: #fef6f0;
+    --blush:       #f9d4bc;
+    --cream:       #faf8f5;
+    --ink:         #1c2b2e;
+    --ink-mid:     #3d5457;
+    --ink-light:   #7a9498;
+    --white:       #ffffff;
+    --border:      #ddeaec;
+    --sidebar-w:   260px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────── */
+.sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--teal-deep) 0%, var(--teal-mid) 100%);
+    border-radius: 0 36px 36px 0;
+    padding: 36px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-shadow: 6px 0 40px rgba(45,106,117,0.18);
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.logo img {
+    width: 160px;
+    height: auto;
+    margin-bottom: 48px;
+    display: block;
+}
+
+.nav-links { display: flex; flex-direction: column; gap: 6px; }
+
+.nav-links a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: all 0.25s ease;
+}
+.nav-links a svg { width: 17px; height: 17px; flex-shrink: 0; }
+.nav-links a:hover {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    transform: translateX(4px);
+}
+.nav-links a.active {
+    background: white;
+    color: var(--teal-deep);
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 20px;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 13px;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s;
+}
+.logout-btn svg { width: 16px; height: 16px; }
+.logout-btn:hover {
+    background: rgba(255,255,255,0.22);
+    transform: translateY(-1px);
+}
+
+/* ─── MAIN ─────────────────────────────────────────── */
+.main-content {
+    flex: 1;
+    padding: 40px 48px;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+/* ─── PAGE HEADER ──────────────────────────────────── */
+.page-header {
+    margin-bottom: 32px;
+}
+.page-header .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--orange-mid);
+    margin-bottom: 10px;
+}
+.page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 54px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.1;
+}
+.page-header h1 em {
+    font-style: italic;
+    color: var(--teal-mid);
+}
+.match-info {
+    font-size: 15px;
+    color: var(--ink-light);
+    margin-top: 10px;
+}
+
+/* ─── FILTER BAR ───────────────────────────────────── */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    cursor: pointer;
+    transition: all 0.22s ease;
+    user-select: none;
+}
+.filter-chip svg { width: 16px; height: 16px; color: var(--ink-light); transition: color 0.22s; }
+.filter-chip input { display: none; }
+
+.filter-chip:hover {
+    border-color: var(--teal-mid);
+    color: var(--teal-mid);
+    background: var(--teal-pale);
+}
+.filter-chip:hover svg { color: var(--teal-mid); }
+
+.filter-chip.active-urgent {
+    border-color: #e53e3e;
+    background: #fff5f5;
+    color: #c53030;
+}
+.filter-chip.active-urgent svg { color: #c53030; }
+
+.filter-chip.active-micro {
+    border-color: var(--teal-mid);
+    background: var(--teal-pale);
+    color: var(--teal-deep);
+}
+.filter-chip.active-micro svg { color: var(--teal-mid); }
+
+.filter-chip.active-match {
+    border-color: var(--orange-mid);
+    background: var(--orange-pale);
+    color: var(--orange-deep);
+}
+.filter-chip.active-match svg { color: var(--orange-mid); }
+
+/* ─── OPPORTUNITIES GRID ───────────────────────────── */
+.opportunities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 22px;
+}
+
+/* ─── OPPORTUNITY CARD ─────────────────────────────── */
+.opportunity-card {
+    background: white;
+    border-radius: 24px;
+    padding: 28px;
+    border: 1.5px solid var(--border);
+    box-shadow: 0 4px 20px rgba(45,106,117,0.06);
+    transition: all 0.28s cubic-bezier(0.22,1,0.36,1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    animation: fadeUp 0.5s ease both;
+}
+.opportunity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(45,106,117,0.13);
+    border-color: var(--teal-soft);
+}
+.opportunity-card.has-match {
+    border-color: var(--orange-mid);
+    box-shadow: 0 4px 20px rgba(232,128,74,0.1);
+}
+.opportunity-card.has-match:hover {
+    box-shadow: 0 16px 40px rgba(232,128,74,0.18);
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.opportunities-grid .opportunity-card:nth-child(1)  { animation-delay: 0.05s; }
+.opportunities-grid .opportunity-card:nth-child(2)  { animation-delay: 0.10s; }
+.opportunities-grid .opportunity-card:nth-child(3)  { animation-delay: 0.15s; }
+.opportunities-grid .opportunity-card:nth-child(4)  { animation-delay: 0.20s; }
+.opportunities-grid .opportunity-card:nth-child(5)  { animation-delay: 0.25s; }
+.opportunities-grid .opportunity-card:nth-child(6)  { animation-delay: 0.30s; }
+
+/* ─── CARD TOP ─────────────────────────────────────── */
+.card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.card-top h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    flex: 1;
+}
+
+/* ─── BADGES ───────────────────────────────────────── */
+.badges {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.badge svg { width: 11px; height: 11px; }
+
+.badge.urgent  { background: #fff0f0; color: #c53030; border: 1px solid #fecaca; }
+.badge.micro   { background: var(--teal-pale); color: var(--teal-deep); border: 1px solid var(--teal-soft); }
+.badge.match   { background: var(--orange-pale); color: var(--orange-deep); border: 1px solid var(--blush); }
+
+/* ─── NGO NAME ─────────────────────────────────────── */
+.ngo-name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-light);
+}
+.ngo-name svg { width: 15px; height: 15px; color: var(--teal-mid); flex-shrink: 0; }
+
+/* ─── DESCRIPTION ──────────────────────────────────── */
+.description {
+    font-size: 15px;
+    color: var(--ink-mid);
+    line-height: 1.65;
+    flex: 1;
+}
+
+/* ─── SKILLS ───────────────────────────────────────── */
+.skills-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.skills-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+}
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+.skill-tag {
+    padding: 6px 13px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--teal-pale);
+    color: var(--ink-mid);
+    border: 1px solid var(--border);
+}
+.skill-tag.matched {
+    background: var(--orange-pale);
+    color: var(--orange-deep);
+    border-color: var(--blush);
+    font-weight: 600;
+}
+
+/* ─── LOCATION ─────────────────────────────────────── */
+.location {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    color: var(--ink-light);
+}
+.location svg { width: 15px; height: 15px; color: var(--teal-mid); flex-shrink: 0; }
+
+/* ─── CARD FOOTER / BUTTON ─────────────────────────── */
+.card-footer-btn {
+    margin-top: auto;
+}
+
+.btn-apply {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--teal-mid), var(--orange-mid));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+.btn-apply svg { width: 16px; height: 16px; }
+.btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(78,154,166,0.3);
+}
+
+.btn-applied {
+    width: 100%;
+    padding: 13px;
+    background: #f0faf5;
+    color: #2d8a5e;
+    border: 1.5px solid #a7f0c8;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-applied svg { width: 16px; height: 16px; }
+
+/* ─── STATS BAR ────────────────────────────────────── */
+.stats-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 20px;
+    box-shadow: 0 2px 12px rgba(45,106,117,0.05);
+    transition: all 0.22s;
+}
+.stat-pill:hover {
+    border-color: var(--teal-soft);
+    box-shadow: 0 6px 20px rgba(45,106,117,0.1);
+    transform: translateY(-2px);
+}
+.stat-pill-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.stat-pill-icon svg { width: 17px; height: 17px; }
+.stat-pill-icon.orange { background: var(--orange-pale); color: var(--orange-deep); }
+.stat-pill-icon.teal   { background: var(--teal-pale);   color: var(--teal-deep); }
+.stat-pill-icon.green  { background: #f0faf5; color: #2d8a5e; }
+
+.stat-pill-text { display: flex; flex-direction: column; }
+.stat-pill-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+}
+.stat-pill-label {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-top: 3px;
+}
+
+/* ─── TOAST ────────────────────────────────────────── */
+.toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: white;
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.14);
+    border: 1.5px solid var(--border);
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+    max-width: 340px;
+}
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+.toast-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.toast-icon.success { background: #f0faf5; color: #2d8a5e; }
+.toast-icon.error   { background: #fff5f5; color: #c53030; }
+.toast-icon svg { width: 20px; height: 20px; }
+.toast-body { display: flex; flex-direction: column; }
+.toast-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+.toast-msg   { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+.empty-state, .loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-light);
+}
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--teal-pale);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+.empty-icon svg { width: 28px; height: 28px; color: var(--teal-mid); }
+.empty-state p, .loading-state p { font-size: 15px; color: var(--ink-light); }
+.empty-state h3 { font-size: 18px; color: var(--ink-mid); margin-bottom: 8px; }
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--teal-mid);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── RESPONSIVE ───────────────────────────────────── */
+@media (max-width: 1100px) {
+    .opportunities-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    .main-content { padding: 28px 24px; }
+    .page-header h1 { font-size: 34px; }
+}
+
+@media (max-width: 680px) {
+    body { flex-direction: column; }
+    .sidebar {
+        width: 100%;
+        min-height: unset;
+        height: auto;
+        border-radius: 0 0 28px 28px;
+        padding: 20px 24px;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .logo img { width: 120px; margin-bottom: 0; }
+    .nav-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+    .nav-links a { padding: 9px 14px; font-size: 13px; }
+    .nav-links a:hover { transform: none; }
+    .sidebar-footer { border-top: none; padding-top: 0; }
+    .main-content { padding: 24px 16px; }
+    .opportunities-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-    <nav class="navbar">
-        <h2>🤝 VolunteerHub</h2>
-        <div class="nav-links">
-            <a href="volunteer.html" class="active">Opportunities</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="quiz.html">Quiz</a>
-            <a href="map.html">Map</a>
-            <button onclick="logout()" class="btn-secondary">Logout</button>
-        </div>
-    </nav>
 
-    <div class="container">
-        <div class="feed-header">
-            <h1>🌟 Opportunities For You</h1>
-            <p id="matchInfo" class="match-info"></p>
-            
-            <div class="filters">
-                <label>
-                    <input type="checkbox" id="filterUrgent"> 🚨 Urgent Only
-                </label>
-                <label>
-                    <input type="checkbox" id="filterMicro"> ⏱ Quick Tasks Only
-                </label>
-                <label>
-                    <input type="checkbox" id="filterMatched"> ✔ My Skills Only
-                </label>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div>
+        <div class="logo">
+            <img src="images/volunteerhub-logo.png" alt="VolunteerHub">
+        </div>
+        <nav class="nav-links">
+            <a href="dashboard.html"><i data-lucide="bar-chart-3"></i> Dashboard</a>
+            <a href="volunteer.html" class="active"><i data-lucide="briefcase"></i> Opportunities</a>
+            <a href="quiz.html"><i data-lucide="sparkles"></i> Quiz</a>
+            <a href="map.html"><i data-lucide="map"></i> Map</a>
+            <a href="calendar.html"><i data-lucide="calendar"></i> Calendar</a>
+        </nav>
+    </div>
+    <div class="sidebar-footer">
+        <button onclick="logout()" class="logout-btn">
+            <i data-lucide="log-out"></i> Logout
+        </button>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main-content">
+
+    <div class="page-header">
+        <p class="eyebrow">Volunteer Opportunities</p>
+        <h1>Opportunities <em>For You</em></h1>
+        <p id="matchInfo" class="match-info"></p>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stat-pill">
+            <div class="stat-pill-icon orange"><i data-lucide="send"></i></div>
+            <div class="stat-pill-text">
+                <span class="stat-pill-value" id="statApplied">0</span>
+                <span class="stat-pill-label">Applied</span>
             </div>
         </div>
-
-        <div id="opportunitiesFeed">
-            <p class="loading">Loading opportunities...</p>
+        <div class="stat-pill">
+            <div class="stat-pill-icon teal"><i data-lucide="briefcase"></i></div>
+            <div class="stat-pill-text">
+                <span class="stat-pill-value" id="statTotal">0</span>
+                <span class="stat-pill-label">Total available</span>
+            </div>
+        </div>
+        <div class="stat-pill">
+            <div class="stat-pill-icon green"><i data-lucide="star"></i></div>
+            <div class="stat-pill-text">
+                <span class="stat-pill-value" id="statMatched">0</span>
+                <span class="stat-pill-label">Skill matches</span>
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <!-- FILTER CHIPS -->
+    <div class="filter-bar">
+        <label class="filter-chip" id="chipUrgent">
+            <input type="checkbox" id="filterUrgent">
+            <i data-lucide="zap"></i>
+            Urgent Only
+        </label>
+        <label class="filter-chip" id="chipMicro">
+            <input type="checkbox" id="filterMicro">
+            <i data-lucide="clock"></i>
+            Quick Tasks
+        </label>
+        <label class="filter-chip" id="chipMatch">
+            <input type="checkbox" id="filterMatched">
+            <i data-lucide="check-circle"></i>
+            Matches My Skills
+        </label>
+    </div>
 
-        // TODO: Replace with your Firebase config
-       const firebaseConfig = {
-  apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
-  authDomain: "volunteerhub-5c419.firebaseapp.com",
-  projectId: "volunteerhub-5c419",
-  storageBucket: "volunteerhub-5c419.firebasestorage.app",
-  messagingSenderId: "769987727654",
-  appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
+    <!-- FEED -->
+    <div id="opportunitiesFeed">
+        <div class="opportunities-grid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading opportunities…</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+lucide.createIcons();
+
+// Filter chip visual toggle
+document.getElementById('chipUrgent').addEventListener('change', function() {
+    this.classList.toggle('active-urgent', this.querySelector('input').checked);
+});
+document.getElementById('chipMicro').addEventListener('change', function() {
+    this.classList.toggle('active-micro', this.querySelector('input').checked);
+});
+document.getElementById('chipMatch').addEventListener('change', function() {
+    this.classList.toggle('active-match', this.querySelector('input').checked);
+});
+</script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, where, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+    authDomain: "volunteerhub-5c419.firebaseapp.com",
+    projectId: "volunteerhub-5c419",
+    storageBucket: "volunteerhub-5c419.firebasestorage.app",
+    messagingSenderId: "769987727654",
+    appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
 };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        let currentUser = null;
-        let volunteerSkills = [];
-        let appliedOpportunities = new Set();
+let currentUser     = null;
+let currentUserData = null;
+let volunteerSkills = [];
+let appliedOpportunities = new Set();
 
-        // Check authentication
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-                if (userDoc.exists() && userDoc.data().role === 'volunteer') {
-                    if (userDoc.data().profileCompleted) {
-                        volunteerSkills = userDoc.data().skills || [];
-                        await loadApplications();
-                        await loadOpportunities();
-                    } else {
-                        window.location.href = 'profile.html';
-                    }
-                } else {
-                    window.location.href = 'index.html';
-                }
+// ─── Toast helper ──────────────────────────────────
+function showToast(title, msg, type = 'success') {
+    const toast     = document.getElementById('toast');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastMsg   = document.getElementById('toastMsg');
+
+    toastTitle.textContent = title;
+    toastMsg.textContent   = msg;
+    toastIcon.className    = `toast-icon ${type}`;
+    toastIcon.innerHTML    = type === 'success'
+        ? `<i data-lucide="check-circle"></i>`
+        : `<i data-lucide="alert-circle"></i>`;
+    lucide.createIcons();
+
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// ─── Auth ──────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user;
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (userDoc.exists() && userDoc.data().role === 'volunteer') {
+            if (userDoc.data().profileCompleted) {
+                currentUserData = userDoc.data();
+                volunteerSkills = currentUserData.skills || [];
+                await loadApplications();
+                await loadOpportunities();
             } else {
-                window.location.href = 'index.html';
+                window.location.href = 'profile.html';
             }
+        } else {
+            window.location.href = 'index.html';
+        }
+    } else {
+        window.location.href = 'index.html';
+    }
+});
+
+window.logout = async () => {
+    await signOut(auth);
+    window.location.href = 'index.html';
+};
+
+// ─── Load applications ─────────────────────────────
+async function loadApplications() {
+    try {
+        const q    = query(collection(db, 'applications'), where('volunteerId', '==', currentUser.uid));
+        const snap = await getDocs(q);
+        snap.forEach(d => appliedOpportunities.add(d.data().opportunityId));
+    } catch (e) { console.error(e); }
+}
+
+// ─── Load opportunities ────────────────────────────
+async function loadOpportunities() {
+    const feed = document.getElementById('opportunitiesFeed');
+
+    try {
+        const snap = await getDocs(collection(db, 'opportunities'));
+
+        if (snap.empty) {
+            feed.innerHTML = `
+                <div class="opportunities-grid">
+                    <div class="empty-state">
+                        <div class="empty-icon"><i data-lucide="inbox"></i></div>
+                        <h3>No opportunities yet</h3>
+                        <p>Check back soon — new ones are added regularly.</p>
+                    </div>
+                </div>`;
+            lucide.createIcons();
+            return;
+        }
+
+        let opps = [];
+        snap.forEach(d => {
+            const opp = { id: d.id, ...d.data() };
+            const matchedSkills = volunteerSkills.filter(s => opp.skills.includes(s));
+            opp.matchedSkills = matchedSkills;
+            opp.matchCount    = matchedSkills.length;
+            opp.isApplied     = appliedOpportunities.has(d.id);
+            opps.push(opp);
         });
 
-        // Logout
-        window.logout = async () => {
-            await signOut(auth);
-            window.location.href = 'index.html';
-        };
+        opps.sort((a, b) => {
+            if (a.urgent && !b.urgent) return -1;
+            if (!a.urgent && b.urgent) return 1;
+            if (a.micro  && !b.micro)  return -1;
+            if (!a.micro  && b.micro)  return 1;
+            return b.matchCount - a.matchCount;
+        });
 
-        // Load user's applications
-        async function loadApplications() {
-            try {
-                const q = query(
-                    collection(db, 'applications'),
-                    where('volunteerId', '==', currentUser.uid)
-                );
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    appliedOpportunities.add(doc.data().opportunityId);
-                });
-            } catch (error) {
-                console.error('Error loading applications:', error);
-            }
-        }
+        const perfect = opps.filter(o => o.matchCount > 0).length;
 
-        // Load and display opportunities
-        async function loadOpportunities() {
-            const feedContainer = document.getElementById('opportunitiesFeed');
-            const matchInfo = document.getElementById('matchInfo');
+        // Update stat pills
+        document.getElementById('statApplied').textContent = appliedOpportunities.size;
+        document.getElementById('statTotal').textContent   = opps.length;
+        document.getElementById('statMatched').textContent = perfect;
+        document.getElementById('matchInfo').textContent   =
+            `${opps.length} opportunities found · ${perfect} match your skills`;
 
-            try {
-                const querySnapshot = await getDocs(collection(db, 'opportunities'));
-                
-                if (querySnapshot.empty) {
-                    feedContainer.innerHTML = '<p class="empty-state">No opportunities available yet. Check back soon!</p>';
-                    return;
-                }
+        displayOpportunities(opps);
 
-                let opportunities = [];
-                querySnapshot.forEach((doc) => {
-                    const opp = { id: doc.id, ...doc.data() };
-                    
-                    // Calculate matching skills
-                    const matchedSkills = volunteerSkills.filter(skill => 
-                        opp.skills.includes(skill)
-                    );
-                    
-                    opp.matchedSkills = matchedSkills;
-                    opp.matchCount = matchedSkills.length;
-                    opp.isApplied = appliedOpportunities.has(doc.id);
-                    
-                    opportunities.push(opp);
-                });
+        // Filter listeners (add once)
+        document.getElementById('filterUrgent').addEventListener('change',  () => filterOpps(opps));
+        document.getElementById('filterMicro').addEventListener('change',   () => filterOpps(opps));
+        document.getElementById('filterMatched').addEventListener('change', () => filterOpps(opps));
 
-                // Sort opportunities: Urgent first, then micro-tasks, then by match count
-                opportunities.sort((a, b) => {
-                    if (a.urgent && !b.urgent) return -1;
-                    if (!a.urgent && b.urgent) return 1;
-                    if (a.micro && !b.micro) return -1;
-                    if (!a.micro && b.micro) return 1;
-                    return b.matchCount - a.matchCount;
-                });
+    } catch (e) {
+        feed.innerHTML = `<p style="color:#e53e3e;padding:20px">Error: ${e.message}</p>`;
+    }
+}
 
-                // Display match info
-                const perfectMatches = opportunities.filter(o => o.matchCount > 0).length;
-                matchInfo.textContent = `Found ${opportunities.length} opportunities • ${perfectMatches} match your skills`;
+// ─── Filter ────────────────────────────────────────
+function filterOpps(all) {
+    const urgent  = document.getElementById('filterUrgent').checked;
+    const micro   = document.getElementById('filterMicro').checked;
+    const matched = document.getElementById('filterMatched').checked;
+    let filtered  = all;
+    if (urgent)  filtered = filtered.filter(o => o.urgent);
+    if (micro)   filtered = filtered.filter(o => o.micro);
+    if (matched) filtered = filtered.filter(o => o.matchCount > 0);
+    displayOpportunities(filtered);
+}
 
-                displayOpportunities(opportunities);
-                
-                // Add filter listeners
-                document.getElementById('filterUrgent').addEventListener('change', () => filterOpportunities(opportunities));
-                document.getElementById('filterMicro').addEventListener('change', () => filterOpportunities(opportunities));
-                document.getElementById('filterMatched').addEventListener('change', () => filterOpportunities(opportunities));
-                
-            } catch (error) {
-                feedContainer.innerHTML = `<p class="error-msg">Error loading opportunities: ${error.message}</p>`;
-            }
-        }
+// ─── Display ───────────────────────────────────────
+function displayOpportunities(opps) {
+    const feed = document.getElementById('opportunitiesFeed');
 
-        // Filter opportunities
-        function filterOpportunities(allOpportunities) {
-            const filterUrgent = document.getElementById('filterUrgent').checked;
-            const filterMicro = document.getElementById('filterMicro').checked;
-            const filterMatched = document.getElementById('filterMatched').checked;
+    if (opps.length === 0) {
+        feed.innerHTML = `
+            <div class="opportunities-grid">
+                <div class="empty-state">
+                    <div class="empty-icon"><i data-lucide="filter-x"></i></div>
+                    <h3>No results</h3>
+                    <p>Try adjusting your filters to see more opportunities.</p>
+                </div>
+            </div>`;
+        lucide.createIcons();
+        return;
+    }
 
-            let filtered = allOpportunities;
+    let html = '<div class="opportunities-grid">';
 
-            if (filterUrgent) {
-                filtered = filtered.filter(o => o.urgent);
-            }
-            if (filterMicro) {
-                filtered = filtered.filter(o => o.micro);
-            }
-            if (filterMatched) {
-                filtered = filtered.filter(o => o.matchCount > 0);
-            }
+    opps.forEach(opp => {
+        const hasMatch = opp.matchCount > 0;
 
-            displayOpportunities(filtered);
-        }
+        const skillsHtml = opp.skills.map(s => {
+            const matched = volunteerSkills.includes(s);
+            return `<span class="skill-tag ${matched ? 'matched' : ''}">${s}</span>`;
+        }).join('');
 
-        // Display opportunities
-        function displayOpportunities(opportunities) {
-            const feedContainer = document.getElementById('opportunitiesFeed');
+        const btn = opp.isApplied
+            ? `<button class="btn-applied" disabled>
+                   <i data-lucide="check-circle"></i> Applied
+               </button>`
+            : `<button class="btn-apply" onclick="applyForOpportunity('${opp.id}', '${(opp.title||'').replace(/'/g,"\\'")}', '${(opp.ngoName||'').replace(/'/g,"\\'")}', '${opp.ngoId || ''}')">
+                   <i data-lucide="send"></i> Volunteer Now
+               </button>`;
 
-            if (opportunities.length === 0) {
-                feedContainer.innerHTML = '<p class="empty-state">No opportunities match your filters</p>';
-                return;
-            }
-
-            let html = '<div class="opportunities-grid">';
-            
-            opportunities.forEach(opp => {
-                const hasMatch = opp.matchCount > 0;
-                
-                html += `
-                    <div class="opportunity-card ${hasMatch ? 'has-match' : ''}">
-                        <div class="card-header">
-                            <h3>${opp.title}</h3>
-                            <div class="badges">
-                                ${opp.urgent ? '<span class="badge urgent">🚨 Urgent</span>' : ''}
-                                ${opp.micro ? '<span class="badge micro">⏱ Quick Help (30-60 min)</span>' : ''}
-                                ${hasMatch ? '<span class="badge match">✔ Matches Your Skills</span>' : ''}
-                            </div>
-                        </div>
-                        
-                        <p class="ngo-name">🏢 ${opp.ngoName}</p>
-                        <p class="description">${opp.description}</p>
-                        
-                        <div class="skills-needed">
-                            <strong>Skills Needed:</strong>
-                            <div class="skill-tags">
-                                ${opp.skills.map(skill => {
-                                    const isMatch = volunteerSkills.includes(skill);
-                                    return `<span class="skill-tag ${isMatch ? 'matched' : ''}">${skill}</span>`;
-                                }).join('')}
-                            </div>
-                        </div>
-                        
-                        <p class="location">📍 ${opp.location}</p>
-                        
-                        ${opp.isApplied 
-                            ? '<button class="btn-applied" disabled>✓ Applied</button>'
-                            : `<button onclick="applyForOpportunity('${opp.id}')" class="btn-primary">Volunteer Now</button>`
-                        }
+        html += `
+            <div class="opportunity-card ${hasMatch ? 'has-match' : ''}">
+                <div class="card-top">
+                    <h3>${opp.title}</h3>
+                    <div class="badges">
+                        ${opp.urgent ? `<span class="badge urgent"><i data-lucide="zap"></i> Urgent</span>` : ''}
+                        ${opp.micro  ? `<span class="badge micro"><i data-lucide="clock"></i> Quick</span>` : ''}
+                        ${hasMatch   ? `<span class="badge match"><i data-lucide="star"></i> Match</span>` : ''}
                     </div>
-                `;
-            });
-            
-            html += '</div>';
-            feedContainer.innerHTML = html;
-        }
+                </div>
+                <div class="ngo-name">
+                    <i data-lucide="building-2"></i>
+                    ${opp.ngoName}
+                </div>
+                <p class="description">${opp.description}</p>
+                <div class="skills-section">
+                    <span class="skills-label">Skills needed</span>
+                    <div class="skill-tags">${skillsHtml}</div>
+                </div>
+                <div class="location">
+                    <i data-lucide="map-pin"></i>
+                    ${opp.location}
+                </div>
+                <div class="card-footer-btn">${btn}</div>
+            </div>
+        `;
+    });
 
-        // Apply for opportunity
-        window.applyForOpportunity = async (opportunityId) => {
-            try {
-                await addDoc(collection(db, 'applications'), {
-                    opportunityId: opportunityId,
-                    volunteerId: currentUser.uid,
-                    appliedAt: new Date().toISOString(),
-                    status: 'pending'
-                });
+    html += '</div>';
+    feed.innerHTML = html;
+    lucide.createIcons();
+}
 
-                appliedOpportunities.add(opportunityId);
-                alert('✅ Application submitted successfully!');
-                
-                // Reload to update UI
-                await loadOpportunities();
-            } catch (error) {
-                alert('Error applying: ' + error.message);
-            }
-        };
-    </script>
+// ─── Apply + notify NGO ────────────────────────────
+window.applyForOpportunity = async (opportunityId, oppTitle, ngoName, ngoId) => {
+    try {
+        const volunteerName = currentUserData?.name || currentUser.email;
+
+        // 1. Write the application
+        await addDoc(collection(db, 'applications'), {
+            opportunityId,
+            volunteerId:   currentUser.uid,
+            volunteerName,
+            volunteerEmail: currentUser.email,
+            appliedAt: new Date().toISOString(),
+            status:    'pending'
+        });
+
+        appliedOpportunities.add(opportunityId);
+
+        // 2. Write a notification for the NGO
+        //    (stored in /notifications, readable by the NGO user)
+        await addDoc(collection(db, 'notifications'), {
+            recipientId:   ngoId || ngoName,   // NGO's uid if stored, else ngoName as fallback
+            recipientName: ngoName,
+            type:          'new_application',
+            opportunityId,
+            opportunityTitle: oppTitle,
+            volunteerId:   currentUser.uid,
+            volunteerName,
+            volunteerEmail: currentUser.email,
+            message:       `${volunteerName} has applied to volunteer for "${oppTitle}"`,
+            read:          false,
+            createdAt:     new Date().toISOString()
+        });
+
+        // 3. Update stat pill immediately
+        document.getElementById('statApplied').textContent = appliedOpportunities.size;
+
+        // 4. Show nice toast instead of alert
+        showToast('Application sent!', `You applied to "${oppTitle}" — the NGO has been notified.`);
+
+        // 5. Reload feed to flip button to Applied
+        await loadOpportunities();
+
+    } catch (e) {
+        console.error(e);
+        showToast('Something went wrong', e.message, 'error');
+    }
+};
+</script>
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <div class="toast-icon success" id="toastIcon"><i data-lucide="check-circle"></i></div>
+    <div class="toast-body">
+        <span class="toast-title" id="toastTitle">Applied!</span>
+        <span class="toast-msg"   id="toastMsg">Your application was submitted.</span>
+    </div>
+</div>
+
 </body>
 </html>

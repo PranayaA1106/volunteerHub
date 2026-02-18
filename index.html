@@ -3,168 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VolunteerHub - Login</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>VolunteerHub — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --teal-deep:   #2d6a75;
+    --teal-mid:    #4e9aa6;
+    --teal-soft:   #b8dde3;
+    --teal-pale:   #e8f5f7;
+    --orange-mid:  #f0a070;
+    --orange-deep: #d4743a;
+    --orange-pale: #fef6f0;
+    --blush:       #f9d4bc;
+    --cream:       #faf8f5;
+    --ink:         #1c2b2e;
+    --ink-mid:     #3d5457;
+    --ink-light:   #7a9498;
+    --border:      #ddeaec;
+    --white:       #ffffff;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    overflow: hidden;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────── */
+.page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+}
+
+/* ─── LEFT PANEL ──────────────────────────────────── */
+.left-panel {
+    background: linear-gradient(160deg, var(--teal-deep) 0%, var(--teal-mid) 55%, var(--orange-mid) 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 52px;
+    overflow: hidden;
+}
+
+/* decorative circles */
+.left-panel::before {
+    content: '';
+    position: absolute;
+    width: 480px; height: 480px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    top: -140px; right: -140px;
+}
+.left-panel::after {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    bottom: -80px; left: -60px;
+}
+
+.panel-top { position: relative; z-index: 1; }
+.panel-top img { width: 320px; height: auto; }
+.panel-top .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+.panel-mid {
+    position: relative;
+    z-index: 1;
+}
+
+.panel-mid .headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+.panel-mid .headline em {
+    font-style: italic;
+    color: var(--blush);
+}
+.panel-mid p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+    max-width: 380px;
+}
+
+/* floating stat cards */
+.stat-cards {
+    display: flex;
+    gap: 14px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 18px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: float 4s ease-in-out infinite;
+}
+.stat-card:nth-child(2) { animation-delay: 1.3s; }
+.stat-card:nth-child(3) { animation-delay: 2.6s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+.stat-card-icon {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+}
+.stat-card-icon svg { width: 18px; height: 18px; }
+.stat-card-val  { font-size: 20px; font-weight: 700; color: white; line-height: 1; }
+.stat-card-lbl  { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+
+.panel-bottom {
+    position: relative; z-index: 1;
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+}
+
+/* ─── RIGHT PANEL ─────────────────────────────────── */
+.right-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 56px;
+    overflow-y: auto;
+    background: var(--white);
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 400px;
+    animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── TABS ────────────────────────────────────────── */
+.tabs {
+    display: flex;
+    background: var(--teal-pale);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 36px;
+    gap: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    background: transparent;
+    border-radius: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.22s;
+}
+.tab-btn.active {
+    background: white;
+    color: var(--teal-deep);
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(45,106,117,0.12);
+}
+
+/* ─── FORM HEADING ────────────────────────────────── */
+.form-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+.form-subheading {
+    font-size: 14px;
+    color: var(--ink-light);
+    margin-bottom: 28px;
+}
+
+/* ─── FIELDS ──────────────────────────────────────── */
+.field { margin-bottom: 18px; }
+
+.field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    margin-bottom: 7px;
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.input-wrap .field-icon {
+    position: absolute;
+    left: 14px;
+    width: 17px; height: 17px;
+    color: var(--ink-light);
+    pointer-events: none;
+    flex-shrink: 0;
+}
+.input-wrap input {
+    width: 100%;
+    padding: 13px 14px 13px 44px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--white);
+    transition: border 0.22s, box-shadow 0.22s;
+}
+.input-wrap input:focus {
+    outline: none;
+    border-color: var(--teal-mid);
+    box-shadow: 0 0 0 3px rgba(78,154,166,0.12);
+}
+.input-wrap input::placeholder { color: var(--ink-light); }
+
+/* ─── ROLE GRID ───────────────────────────────────── */
+.role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.role-option {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    transition: all 0.22s;
+    background: white;
+    user-select: none;
+}
+.role-option input { display: none; }
+.role-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: var(--teal-pale);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--teal-mid);
+    transition: all 0.22s;
+}
+.role-icon svg { width: 16px; height: 16px; }
+.role-option:hover { border-color: var(--teal-mid); background: var(--teal-pale); }
+.role-option.selected { border-color: var(--teal-mid); background: var(--teal-pale); }
+.role-option.selected .role-icon {
+    background: linear-gradient(135deg, var(--teal-mid), var(--orange-mid));
+    color: white;
+}
+
+/* ─── BUTTON ──────────────────────────────────────── */
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--teal-mid), var(--orange-mid));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    transition: all 0.25s;
+    margin-top: 8px;
+}
+.btn-submit svg { width: 17px; height: 17px; }
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(78,154,166,0.3);
+}
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ─── MESSAGES ────────────────────────────────────── */
+.msg {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+}
+.msg.error   { background: #fff5f5; color: #c53030; border: 1px solid #fecaca; display: flex; }
+.msg.success { background: #f0faf5; color: #2d8a5e; border: 1px solid #a7f0c8; display: flex; }
+.msg svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* ─── SPINNER ─────────────────────────────────────── */
+.spinner-sm {
+    width: 17px; height: 17px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── DIVIDER ─────────────────────────────────────── */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--ink-light);
+    font-size: 12px;
+}
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 860px) {
+    html, body { overflow: auto; }
+    .page { grid-template-columns: 1fr; height: auto; }
+    .left-panel { padding: 40px 32px; min-height: 320px; }
+    .left-panel::before, .left-panel::after { display: none; }
+    .panel-mid .headline { font-size: 36px; }
+    .stat-cards { display: none; }
+    .right-panel { padding: 40px 28px; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="auth-box">
-            <h1>🤝 VolunteerHub</h1>
-            <p class="tagline">Connecting Hearts, Creating Impact</p>
+
+<div class="page">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="left-panel">
+        <div class="panel-top">
+            <img src="images/volunteerhub-logo.png" alt="VolunteerHub"
+                 onerror="this.style.display='none'">
             
-            <div class="tabs">
-                <button class="tab-btn active" onclick="showTab('login')">Login</button>
-                <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="loginForm" class="auth-form">
-                <h2>Welcome Back!</h2>
-                <label for="loginEmail">Email</label>
-                <input type="email" id="loginEmail" placeholder="Email" required>
-                
-                <label for="loginPassword">Password</label>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                
-                <button type="submit" class="btn-primary">Login</button>
-                <p class="error-msg" id="loginError"></p>
-            </form>
-
-            <!-- Signup Form -->
-            <form id="signupForm" class="auth-form" style="display:none;">
-                <h2>Join Us Today!</h2>
-                <input type="email" id="signupEmail" placeholder="Email" required>
-                <input type="password" id="signupPassword" placeholder="Password (min 6 chars)" required>
-                
-                <label class="role-label">I am a:</label>
-                <select id="role" required>
-                    <option value="">Select Role</option>
-                    <option value="volunteer">🙋 Volunteer</option>
-                    <option value="ngo">🏢 NGO</option>
-                </select>
-                
-                <button type="submit" class="btn-primary">Sign Up</button>
-                <p class="error-msg" id="signupError"></p>
-            </form>
         </div>
+
+        <div class="panel-mid">
+            <h1 class="headline">Make an<br><em>impact</em><br>today.</h1>
+            <p>Join thousands of volunteers and NGOs building a better world — one opportunity at a time.</p>
+
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i data-lucide="users"></i></div>
+                    <div>
+                        <div class="stat-card-val">2,400+</div>
+                        <div class="stat-card-lbl">Volunteers</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i data-lucide="building-2"></i></div>
+                    <div>
+                        <div class="stat-card-val">180+</div>
+                        <div class="stat-card-lbl">Partner NGOs</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon"><i data-lucide="heart"></i></div>
+                    <div>
+                        <div class="stat-card-val">12k hrs</div>
+                        <div class="stat-card-lbl">Contributed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-bottom">© 2025 VolunteerHub. All rights reserved.</div>
     </div>
 
-    <!-- Firebase Config -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    <!-- ── RIGHT PANEL ── -->
+    <div class="right-panel">
+        <div class="auth-box">
 
-        // TODO: Replace with your Firebase config
-        const firebaseConfig = {
-            apiKey: "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
-            authDomain: "volunteerhub-5c419.firebaseapp.com",
-            projectId: "volunteerhub-5c419",
-            storageBucket: "volunteerhub-5c419.firebasestorage.app",
-            messagingSenderId: "769987727654",
-            appId: "1:769987727654:web:20f964e64bcae74d8bb1e7"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('login')">Login</button>
+                <button class="tab-btn"        onclick="showTab('signup')">Sign Up</button>
+            </div>
 
-        // Make globally available
-        window.auth = auth;
-        window.db = db;
+            <!-- LOGIN -->
+            <form id="loginForm">
+                <p class="form-heading">Welcome back</p>
+                <p class="form-subheading">Sign in to continue your journey</p>
 
-        // Login Handler
- document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const errorMsg = document.getElementById('loginError');
+                <div class="field">
+                    <label>Email address</label>
+                    <div class="input-wrap">
+                        <i data-lucide="mail" class="field-icon"></i>
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    </div>
+                </div>
 
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log("Auth Success:", userCredential.user.uid);
+                <div class="field">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <i data-lucide="lock" class="field-icon"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
 
-            // Detailed Firestore Fetch
-            const docRef = doc(db, 'users', userCredential.user.uid);
-            // Inside your loginForm submit handler in index.html
-const userDoc = await getDoc(doc(db, 'users', user.uid));
+                <button type="submit" class="btn-submit" id="loginBtn">
+                    <i data-lucide="log-in"></i> Sign In
+                </button>
+                <div class="msg" id="loginMsg"></div>
+            </form>
 
-if (userDoc.exists()) {
-    const data = userDoc.data();
-    // If the role exists, send them to their dashboard
-    if (data.role === 'volunteer') {
-        window.location.href = 'profile.html'; // Or volunteer.html if already done
-    } else if (data.role === 'ngo') {
-        window.location.href = 'ngo.html';
-    }
-} else {
-    // CRITICAL: If the document is missing, create a basic one so they aren't locked out!
-    await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        role: 'volunteer' // Defaulting to volunteer for now
+            <!-- SIGNUP -->
+            <form id="signupForm" style="display:none;">
+                <p class="form-heading">Create account</p>
+                <p class="form-subheading">Start making a difference today</p>
+
+                <div class="field">
+                    <label>Full name</label>
+                    <div class="input-wrap">
+                        <i data-lucide="user" class="field-icon"></i>
+                        <input type="text" id="signupName" placeholder="Your name" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Email address</label>
+                    <div class="input-wrap">
+                        <i data-lucide="mail" class="field-icon"></i>
+                        <input type="email" id="signupEmail" placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <i data-lucide="lock" class="field-icon"></i>
+                        <input type="password" id="signupPassword" placeholder="Min 6 characters" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>I am a</label>
+                    <div class="role-grid">
+                        <label class="role-option" id="roleVolunteer">
+                            <input type="radio" name="role" value="volunteer">
+                            <span class="role-icon"><i data-lucide="heart"></i></span>
+                            Volunteer
+                        </label>
+                        <label class="role-option" id="roleNGO">
+                            <input type="radio" name="role" value="ngo">
+                            <span class="role-icon"><i data-lucide="building-2"></i></span>
+                            NGO
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="signupBtn">
+                    <i data-lucide="user-plus"></i> Create Account
+                </button>
+                <div class="msg" id="signupMsg"></div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+document.querySelectorAll('.role-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+        document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        opt.querySelector('input').checked = true;
     });
-    window.location.href = 'profile.html';
+});
+
+window.showTab = (tab) => {
+    const isLogin = tab === 'login';
+    document.getElementById('loginForm').style.display  = isLogin ? 'block' : 'none';
+    document.getElementById('signupForm').style.display = isLogin ? 'none'  : 'block';
+    document.querySelectorAll('.tab-btn')[0].classList.toggle('active',  isLogin);
+    document.querySelectorAll('.tab-btn')[1].classList.toggle('active', !isLogin);
+};
+
+function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.className = `msg ${type}`;
+    el.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}"></i> ${text}`;
+    lucide.createIcons();
 }
-        } catch (error) {
-            console.error("DEBUG ERROR:", error); // LOOK AT THIS IN THE CONSOLE
-            errorMsg.textContent = error.message;
+
+function setLoading(btnId, originalHTML, loading) {
+    const btn = document.getElementById(btnId);
+    if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner-sm"></div> Please wait…`;
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+        lucide.createIcons();
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp }                           from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword,
+         signInWithEmailAndPassword }              from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc }       from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey:            "AIzaSyDdTtQm8uDTDrWjgfsTHG5zTIkxhDi1mu8",
+    authDomain:        "volunteerhub-5c419.firebaseapp.com",
+    projectId:         "volunteerhub-5c419",
+    storageBucket:     "volunteerhub-5c419.firebasestorage.app",
+    messagingSenderId: "769987727654",
+    appId:             "1:769987727654:web:20f964e64bcae74d8bb1e7"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const ERROR_MSGS = {
+    'auth/user-not-found':        'No account found with this email. Please sign up.',
+    'auth/wrong-password':        'Incorrect password. Please try again.',
+    'auth/invalid-credential':    'Email or password is incorrect.',
+    'auth/invalid-email':         'Please enter a valid email address.',
+    'auth/too-many-requests':     'Too many attempts. Please wait a moment.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+    'auth/email-already-in-use':  'An account with this email already exists. Please log in.',
+    'auth/weak-password':         'Password must be at least 6 characters.',
+};
+
+// ── LOGIN ──────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const origHTML = `<i data-lucide="log-in"></i> Sign In`;
+    setLoading('loginBtn', origHTML, true);
+
+    const email    = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+        const { user } = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc  = await getDoc(doc(db, 'users', user.uid));
+
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            if      (data.role === 'volunteer') window.location.href = data.profileCompleted ? 'volunteer.html' : 'profile.html';
+            else if (data.role === 'ngo')       window.location.href = 'ngo.html';
+            else { showMsg('loginMsg', 'Unknown account role.', 'error'); setLoading('loginBtn', origHTML, false); }
+        } else {
+            // Firestore doc missing — recreate it
+            await setDoc(doc(db, 'users', user.uid), {
+                uid: user.uid, email: user.email,
+                role: 'volunteer', profileCompleted: false,
+                createdAt: new Date().toISOString()
+            });
+            window.location.href = 'profile.html';
         }
-    });
+    } catch (err) {
+        setLoading('loginBtn', origHTML, false);
+        showMsg('loginMsg', ERROR_MSGS[err.code] || err.message, 'error');
+    }
+});
 
-        // Signup Handler
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const role = document.getElementById('role').value;
-            const errorMsg = document.getElementById('signupError');
+// ── SIGNUP ─────────────────────────────────────────
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const origHTML = `<i data-lucide="user-plus"></i> Create Account`;
+    setLoading('signupBtn', origHTML, true);
 
-            if (!role) {
-                errorMsg.textContent = 'Please select a role';
-                return;
-            }
+    const name     = document.getElementById('signupName').value.trim();
+    const email    = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const roleEl   = document.querySelector('input[name="role"]:checked');
 
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+    if (!roleEl) {
+        showMsg('signupMsg', 'Please select whether you are a Volunteer or NGO.', 'error');
+        setLoading('signupBtn', origHTML, false);
+        return;
+    }
 
-                // Save user in Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    uid: user.uid,
-                    email: email,
-                    role: role,
-                    createdAt: new Date().toISOString()
-                });
+    const role = roleEl.value;
 
-                // Redirect based on role
-                if (role === 'volunteer') {
-                    window.location.href = 'profile.html';
-                } else if (role === 'ngo') {
-                    window.location.href = 'ngo.html';
-                }
-            } catch (error) {
-                errorMsg.textContent = error.message;
-            }
+    try {
+        const { user } = await createUserWithEmailAndPassword(auth, email, password);
+
+        await setDoc(doc(db, 'users', user.uid), {
+            uid: user.uid, name, email, role,
+            profileCompleted: false,
+            skills: [], interests: [],
+            createdAt: new Date().toISOString()
         });
 
-        // Tab switching
-        window.showTab = (tab) => {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const tabs = document.querySelectorAll('.tab-btn');
+        if      (role === 'volunteer') window.location.href = 'profile.html';
+        else if (role === 'ngo')       window.location.href = 'ngo.html';
 
-            if (tab === 'login') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
-            }
-        };
-    </script>
+    } catch (err) {
+        setLoading('signupBtn', origHTML, false);
+        showMsg('signupMsg', ERROR_MSGS[err.code] || err.message, 'error');
+    }
+});
+</script>
 </body>
 </html>
