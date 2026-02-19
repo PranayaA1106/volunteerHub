@@ -280,7 +280,6 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
     <div>
         <div class="sidebar-logo">
             <img src="images/volunteerhub-logo.png" alt="VolunteerHub" onerror="this.style.display='none'">
-            <div class="wordmark">VolunteerHub</div>
         </div>
         <nav class="nav-links">
             <button class="nav-item active" onclick="showSection('dashboard')">
@@ -411,7 +410,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
                         <div class="input-wrap"><i data-lucide="users" class="fi"></i><input type="number" id="fslots" placeholder="e.g. 5" min="1" required></div>
                     </div>
                     <div class="field">
-                        <label>Application Deadline *</label>
+                        <label>Expected Date *</label>
                         <div class="input-wrap"><i data-lucide="calendar" class="fi"></i><input type="date" id="fdeadline" required></div>
                     </div>
                     <div class="field field-full">
@@ -419,6 +418,10 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
                         <div class="input-wrap"><i data-lucide="map-pin" class="fi"></i><input type="text" id="flocation" placeholder="City, address or 'Remote'" required></div>
                     </div>
                 </div>
+                <p class="form-section-label">Pin on Map</p>
+                <div id="map"></div>
+                <p style="font-size:12px;color:var(--ink-light);margin-top:6px;">Type an address above to auto-pin, or drag the marker manually.</p>
+
 
                 <p class="form-section-label">Required Skills</p>
                 <div class="chip-grid">
@@ -452,10 +455,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--in
                     </label>
                 </div>
 
-                <p class="form-section-label">Pin on Map</p>
-                <div id="map"></div>
-                <p style="font-size:12px;color:var(--ink-light);margin-top:6px;">Type an address above to auto-pin, or drag the marker manually.</p>
-
+                
                 <button type="submit" class="btn-post-submit" id="postBtn">
                     <i data-lucide="send"></i> Post Opportunity
                 </button>
